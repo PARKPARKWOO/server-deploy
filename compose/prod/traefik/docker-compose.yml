@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:v2.9
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - #TODO: 443 추가
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  app1:
+    image: ignore
+    labels:
+      - "traefik.enable=true"
+      - #TODO: domain 구매 등록
+      - "traefik.http.routers.app1.rule=Host(`localhost`)"
