@@ -15,11 +15,23 @@ jobs:
       - name: Set environment variables
         run: |
           echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
-          echo "APP_NAME=${{ github.event.client_payload.app }}" >> $GITHUB_ENV
+          echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
+
+      - name: Determine compose file path
+        run: |
+          if [ "${{ env.ENVIRONMENT }}" == "dev" ]; then
+            echo "COMPOSE_FILE=compose/dev/docker-compose.yml" >> $GITHUB_ENV
+          elif [ "${{ env.ENVIRONMENT }}" == "prod" ]; then
+            echo "COMPOSE_FILE=compose/prod/docker-compose.yml" >> $GITHUB_ENV
+          else
+            echo "Invalid environment: ${{ env.ENVIRONMENT }}"
+            exit 1
+          fi
 
       - name: Replace image tag in docker-compose.yml
         run: |
-          sed -i '/^[[:space:]]*image:[[:space:]]*'"${{ env.APP_NAME }}"':/ s/:\s*.*$/:'"${{ env.IMAGE_TAG }}"'/' docker-compose.yml
+          sed -i '/^[[:space:]]*image:[[:space:]]*'"${{ env.APP_NAME }}"'\s*$/ {n;s/\(.*\):.*/\1:'"${{ env.IMAGE_TAG }}"'/}' "${{ env.COMPOSE_FILE }}"
 
       - name: Deploy with Docker Compose
-        run: docker-compose up -d ${{ env.APP_NAME }}
+        run: docker-compose -f "${{ env.COMPOSE_FILE }}" up -d "${{ env.APP_NAME }}"

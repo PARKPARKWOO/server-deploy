@@ -14,9 +14,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  app1:
+  barbellrobot-backend:
     image: ignore
     labels:
       - "traefik.enable=true"
-      - #TODO: domain 구매 등록
       - "traefik.http.routers.app1.rule=Host(`localhost`)"
