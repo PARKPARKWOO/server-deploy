@@ -79,7 +79,6 @@ jobs:
             exit 1
           }
           Add-Content -Path $env:GITHUB_ENV -Value "COMPOSE_FILE=$($env:COMPOSE_FILE)"
-
       - name: Replace image tag in docker-compose.yml
         run: |
           $composeFile = $env:COMPOSE_FILE
@@ -90,7 +89,7 @@ jobs:
 
           $newContent = $content | ForEach-Object {
             if ($_ -match "^\s*image:\s*$appName(:.*)?$") {
-              "image: $appName:$imageTag"
+              "image: ${appName}:${imageTag}"
             } else {
               $_
             }
