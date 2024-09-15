@@ -2,7 +2,7 @@ version: '3'
 
 services:
   reverse-proxy:
-    image: barbellrobot-backend:e4145c76475403e672560baade19ccc3a5f93183
+    image: traefik:v2.9
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"

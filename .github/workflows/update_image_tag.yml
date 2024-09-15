@@ -49,9 +49,6 @@ on:
     types: [ update_app_image_tag ]
   workflow_dispatch:
 
-permissions:
-  contents: write  # 푸시 권한을 추가합니다.
-
 jobs:
   commit-changes:
     runs-on: ubuntu-latest
@@ -65,9 +62,9 @@ jobs:
           echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
           echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
 
-      - name: Replace image tag in docker-compose.yml
+      - name: Replace image tag for barbellrobot-backend in docker-compose.yml
         run: |
-          sed -i 's|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
+          sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
 
       - name: Commit and Push Changes
         run: |
@@ -82,9 +79,6 @@ jobs:
   deploy:
     needs: commit-changes
     runs-on: [self-hosted, label-deploy]
-    defaults:
-      run:
-        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command "& {0}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
