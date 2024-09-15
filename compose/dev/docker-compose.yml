@@ -2,7 +2,7 @@ version: '3'
 
 services:
   reverse-proxy:
-    image: traefik:v2.9
+    image: barbellrobot-backend:e4145c76475403e672560baade19ccc3a5f93183
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -14,7 +14,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   barbellrobot-backend:
-    image: ignore
+    image: barbellrobot-backend:e4145c76475403e672560baade19ccc3a5f93183
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app1.rule=Host(`localhost`)"
