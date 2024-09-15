@@ -80,6 +80,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set PowerShell execution policy
+        run: Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+        shell: powershell
+
       - name: Set environment variables
         run: |
           $env:IMAGE_TAG = '${{ github.event.client_payload.image_tag }}'
@@ -88,6 +92,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "IMAGE_TAG=$($env:IMAGE_TAG)"
           Add-Content -Path $env:GITHUB_ENV -Value "APP_NAME=$($env:APP_NAME)"
           Add-Content -Path $env:GITHUB_ENV -Value "ENVIRONMENT=$($env:ENVIRONMENT)"
+        shell: powershell
 
       - name: Docker Hub login
         uses: docker/login-action@v2
@@ -97,3 +102,4 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.APP_NAME }}"
+        shell: powershell
