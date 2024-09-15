@@ -1,0 +1,25 @@
+name: Deploy via Docker Compose
+
+on:
+  repository_dispatch:
+    types: [ update_app_image_tag ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, deploy]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        run: |
+          echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
+          echo "APP_NAME=${{ github.event.client_payload.app }}" >> $GITHUB_ENV
+
+      - name: Replace image tag in docker-compose.yml
+        run: |
+          sed -i '/^[[:space:]]*image:[[:space:]]*'"${{ env.APP_NAME }}"':/ s/:\s*.*$/:'"${{ env.IMAGE_TAG }}"'/' docker-compose.yml
+
+      - name: Deploy with Docker Compose
+        run: docker-compose up -d ${{ env.APP_NAME }}
