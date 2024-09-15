@@ -49,6 +49,9 @@ on:
     types: [ update_app_image_tag ]
   workflow_dispatch:
 
+permissions:
+  contents: write  # 푸시 권한을 추가합니다.
+
 jobs:
   commit-changes:
     runs-on: ubuntu-latest
