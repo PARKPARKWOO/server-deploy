@@ -95,4 +95,4 @@ jobs:
 
       - name: Deploy with Docker Compose
         shell: cmd
-        run: docker-compose -f "compose/%ENVIRONMENT%/docker-compose.yml" up -d "%APP_NAME%"
+        run: docker-compose -f "./compose/%ENVIRONMENT%/docker-compose.yml" up -d "%APP_NAME%"
