@@ -1,0 +1,26 @@
+name: Deploy Traefik via Docker Compose
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-traefik:
+    runs-on: [self-hosted, label-deploy]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        shell: cmd
+        run: |
+          (echo ENVIRONMENT=dev)>>%GITHUB_ENV%  # 필요한 경우 환경 설정
+
+      - name: Docker Hub login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Deploy Traefik with Docker Compose
+        shell: cmd
+        run: docker-compose -f "compose\%ENVIRONMENT%\docker-compose.yml" up -d reverse-proxy
