@@ -2,6 +2,15 @@ name: Deploy Traefik via Docker Compose
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the environment"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
 
 jobs:
   deploy-traefik:
@@ -13,7 +22,7 @@ jobs:
       - name: Set environment variables
         shell: cmd
         run: |
-          (echo ENVIRONMENT=dev)>>%GITHUB_ENV%
+          (echo ENVIRONMENT=${{ inputs.environment }})>>%GITHUB_ENV%
 
       - name: Docker Hub login
         uses: docker/login-action@v2
