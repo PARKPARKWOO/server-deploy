@@ -13,7 +13,7 @@ jobs:
       - name: Set environment variables
         shell: cmd
         run: |
-          (echo ENVIRONMENT=dev)>>%GITHUB_ENV%  # 필요한 경우 환경 설정
+          (echo ENVIRONMENT=dev)>>%GITHUB_ENV%
 
       - name: Docker Hub login
         uses: docker/login-action@v2
