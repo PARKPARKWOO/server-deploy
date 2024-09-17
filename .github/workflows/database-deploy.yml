@@ -32,4 +32,7 @@ jobs:
 
       - name: Deploy MySQL and Redis with Docker Compose
         shell: bash
+        env:
+          RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
+          RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d mysql redis
