@@ -24,9 +24,9 @@ services:
       - internal_network
     environment:
       - REDIS_PORT=6379
-      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=${RDBMS_URI}
+      - RDBMS_URI=mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - GMAIL_USERNAME=${GMAIL_USERNAME}
@@ -42,8 +42,35 @@ services:
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
 
+  redis:
+    image: redis:6.2
+    container_name: redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    networks:
+      - internal_network
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${RDBMS_PASSWORD}
+
+    networks:
+      - internal_network
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
 networks:
   internal_network:
     driver: bridge
   external-network:
     driver: bridge
+
+volumes:
+  mysql-data:
