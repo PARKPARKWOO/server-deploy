@@ -35,4 +35,5 @@ jobs:
         env:
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
           RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d mysql redis
