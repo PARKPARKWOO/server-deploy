@@ -43,7 +43,7 @@ services:
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
 
 networks:
-  app-network:
+  internal_network:
     driver: bridge
   external-network:
     driver: bridge
