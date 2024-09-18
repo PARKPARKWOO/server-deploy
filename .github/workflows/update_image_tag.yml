@@ -7,6 +7,7 @@ on:
 
 jobs:
   commit-changes:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,7 +31,7 @@ jobs:
           echo "New Tag: ${{ env.IMAGE_TAG }}"
           if [ "${{ env.CURRENT_TAG }}" != "${{ env.IMAGE_TAG }}" ]; then
             echo "Replacing image tag from ${{ env.CURRENT_TAG }} to ${{ env.IMAGE_TAG }}"
-            sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
+            sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
           else
             echo "Image tag is the same, no changes needed."
           fi
