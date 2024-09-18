@@ -16,7 +16,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   barbellrobot-backend:
-    image: wy9295/barbellrobot-backend:e4145c76475403e672560baade19ccc3a5f93183
+    image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app1.rule=Host(`localhost`)"
