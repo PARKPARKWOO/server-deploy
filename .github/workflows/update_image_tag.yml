@@ -18,17 +18,38 @@ jobs:
           echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
           echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
 
-      - name: Replace image tag for barbellrobot-backend in docker-compose.yml
+      - name: Get current image tag
+        id: get_current_tag
         run: |
-          sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
+          export CURRENT_TAG=$(grep "image: ${APP_NAME}" compose/${{ env.ENVIRONMENT }}/docker-compose.yml | cut -d':' -f3)
+          echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
+
+      - name: Replace image tag only if different
+        run: |
+          echo "Current Tag: ${{ env.CURRENT_TAG }}"
+          echo "New Tag: ${{ env.IMAGE_TAG }}"
+          if [ "${{ env.CURRENT_TAG }}" != "${{ env.IMAGE_TAG }}" ]; then
+            echo "Replacing image tag from ${{ env.CURRENT_TAG }} to ${{ env.IMAGE_TAG }}"
+            sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
+          else
+            echo "Image tag is the same, no changes needed."
+          fi
+
+      - name: Check if file has changed
+        run: |
+          git diff compose/${{ env.ENVIRONMENT }}/docker-compose.yml || echo "No changes in the file."
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add compose/${{ env.ENVIRONMENT }}/docker-compose.yml
-          git diff --cached --exit-code || git commit -m "Update image tag for ${{ env.APP_NAME }} to ${{ env.IMAGE_TAG }}" || true
-          git push || true
+          if git diff --cached --exit-code; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update image tag for ${{ env.APP_NAME }} to ${{ env.IMAGE_TAG }}"
+            git push
+          fi
 
   deploy:
     needs: commit-changes
@@ -75,83 +96,3 @@ jobs:
           REFRESH_EXPIRE_MILLIS: ${{ secrets.REFRESH_EXPIRE_MILLIS }}
           CLOUD_FRONT_DOMAIN_NAME: ${{ secrets.CLOUD_FRONT_DOMAIN_NAME }}
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.APP_NAME }}"
-
-#name: Deploy via Docker Compose
-#
-#on:
-#  repository_dispatch:
-#    types: [ update_app_image_tag ]
-#  workflow_dispatch:
-#
-#jobs:
-#  commit-changes:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v2
-#
-#      - name: Set environment variables
-#        run: |
-#          echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
-#          echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
-#          echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
-#
-#      - name: Replace image tag for barbellrobot-backend in docker-compose.yml
-#        run: |
-#          sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
-#      - name: Commit and Push Changes
-#        run: |
-#          git config --global user.name "github-actions[bot]"
-#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-#          git add compose/${{ env.ENVIRONMENT }}/docker-compose.yml
-#          git diff --cached --exit-code || git commit -m "Update image tag for ${{ env.APP_NAME }} to ${{ env.IMAGE_TAG }}" || true
-#          git push || true
-#
-#  deploy:
-#    needs: commit-changes
-#    runs-on: [self-hosted, label-deploy]
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v3
-#
-#      - name: Set environment variables
-#        shell: cmd
-#        run: |
-#          (echo IMAGE_TAG=${{ github.event.client_payload.image_tag }})>>%GITHUB_ENV%
-#          (echo APP_NAME=barbellrobot-backend)>>%GITHUB_ENV%
-#          (echo ENVIRONMENT=${{ github.event.client_payload.environment }})>>%GITHUB_ENV%
-#
-#      - name: Debug - Print environment variables
-#        shell: cmd
-#        run: |
-#          echo ENVIRONMENT="%ENVIRONMENT%"
-#          echo IMAGE_TAG="%IMAGE_TAG%"
-#          echo APP_NAME="%APP_NAME%"
-#
-#      - name: Docker Hub login
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-#
-#      - name: Deploy with Docker Compose
-#        shell: cmd
-#        env:
-#          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-#          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-#          RDBMS_URI: ${{ secrets.RDBMS_URI }}
-#          RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
-#          RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
-#          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
-#          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
-#          GEMINI_PROJECT_ID: ${{ secrets.GEMINI_PROJECT_ID }}
-#          GEMINI_LOCATION: ${{ secrets.GEMINI_LOCATION }}
-#          AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
-#          AWS_S3_ACCESS_KEY: ${{ secrets.AWS_S3_ACCESS_KEY }}
-#          AWS_S3_SECRET_KEY: ${{ secrets.AWS_S3_SECRET_KEY }}
-#          ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
-#          ACCESS_EXPIRE_MILLIS: ${{ secrets.ACCESS_EXPIRE_MILLIS }}
-#          REFRESH_SECRET_KEY: ${{ secrets.REFRESH_SECRET_KEY }}
-#          REFRESH_EXPIRE_MILLIS: ${{ secrets.REFRESH_EXPIRE_MILLIS }}
-#          CLOUD_FRONT_DOMAIN_NAME: ${{ secrets.CLOUD_FRONT_DOMAIN_NAME }}
-#        run: docker-compose -f "compose\%ENVIRONMENT%\docker-compose.yml" up -d "%APP_NAME%"

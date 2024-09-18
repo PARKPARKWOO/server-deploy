@@ -43,7 +43,7 @@ services:
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
 
   redis:
-    image: redis:6.2
+    image: redis:latest
     container_name: redis
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
