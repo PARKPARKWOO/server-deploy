@@ -19,7 +19,8 @@ services:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app1.rule=Host(`localhost`)"
+      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
+      - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
     networks:
       - internal_network
     environment:
@@ -41,7 +42,6 @@ services:
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
-
   redis:
     image: redis:latest
     container_name: redis
@@ -67,6 +67,7 @@ services:
       - mysql-data:/var/lib/mysql
   loki:
     image: grafana/loki:2.9.0
+    # loki 접근은 외부에서 못하도록 설정
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
