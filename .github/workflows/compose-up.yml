@@ -1,0 +1,53 @@
+name: Deploy via Docker Compose
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the environment"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, label-deploy]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        shell: bash
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+
+      - name: Docker Hub login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Deploy all services with Docker Compose
+        shell: bash
+        env:
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          RDBMS_URI: ${{ secrets.RDBMS_URI }}
+          RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
+          RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+          GEMINI_PROJECT_ID: ${{ secrets.GEMINI_PROJECT_ID }}
+          GEMINI_LOCATION: ${{ secrets.GEMINI_LOCATION }}
+          AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+          AWS_S3_ACCESS_KEY: ${{ secrets.AWS_S3_ACCESS_KEY }}
+          AWS_S3_SECRET_KEY: ${{ secrets.AWS_S3_SECRET_KEY }}
+          ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+          ACCESS_EXPIRE_MILLIS: ${{ secrets.ACCESS_EXPIRE_MILLIS }}
+          REFRESH_SECRET_KEY: ${{ secrets.REFRESH_SECRET_KEY }}
+          REFRESH_EXPIRE_MILLIS: ${{ secrets.REFRESH_EXPIRE_MILLIS }}
+          CLOUD_FRONT_DOMAIN_NAME: ${{ secrets.CLOUD_FRONT_DOMAIN_NAME }}
+        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
