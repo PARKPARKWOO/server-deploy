@@ -14,6 +14,7 @@ services:
       - internal_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
 
   barbellrobot-backend:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
@@ -21,6 +22,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`) || Host(`localhost`) || Host(`172.30.1.32`)"
       - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.barbellrobot-backend.entrypoints=web"
     networks:
       - internal_network
     environment:

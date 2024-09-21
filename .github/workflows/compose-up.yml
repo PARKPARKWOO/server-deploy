@@ -1,4 +1,4 @@
-name: Deploy via Docker Compose
+name: Deploy via All Container
 
 on:
   workflow_dispatch:
