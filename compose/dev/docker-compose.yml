@@ -14,7 +14,6 @@ services:
       - internal_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.yml:/etc/traefik/traefik.yml
 
   barbellrobot-backend:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
