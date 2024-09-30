@@ -4,14 +4,14 @@ services:
   reverse-proxy:
     image: traefik:v2.9
     command:
-      - "--api.insecure=true"
+#      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:8080"
       - "--accesslog=true"
-      - "--entrypoints.dashboard.address=:8081"
+#      - "--entrypoints.dashboard.address=:8081"
     ports:
       - "8080:8080"
-      - "8081:8081"
+#      - "8081:8081"
     networks:
       - internal_network
     volumes:
