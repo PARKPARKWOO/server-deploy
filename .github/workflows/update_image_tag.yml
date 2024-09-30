@@ -2,7 +2,7 @@ name: Deploy via Docker Compose
 
 on:
   repository_dispatch:
-    types: [ update_app_image_tag ]
+    types: [update_app_image_tag]
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
-          echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
+          echo "APP_NAME=${{ github.event.client_payload.app }}" >> $GITHUB_ENV
           echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
 
       - name: Get current image tag
@@ -31,7 +31,7 @@ jobs:
           echo "New Tag: ${{ env.IMAGE_TAG }}"
           if [ "${{ env.CURRENT_TAG }}" != "${{ env.IMAGE_TAG }}" ]; then
             echo "Replacing image tag from ${{ env.CURRENT_TAG }} to ${{ env.IMAGE_TAG }}"
-            sed -i '/barbellrobot-backend:/!b;n;s|image:.*|image: '"${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|' compose/${{ env.ENVIRONMENT }}/docker-compose.yml
+            sed -i "/${{ env.APP_NAME }}/!b;n;s|image:.*|image: '"${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"'|" compose/${{ env.ENVIRONMENT }}/docker-compose.yml
           else
             echo "Image tag is the same, no changes needed."
           fi
@@ -62,7 +62,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
-          echo "APP_NAME=barbellrobot-backend" >> $GITHUB_ENV
+          echo "APP_NAME=${{ github.event.client_payload.app }}" >> $GITHUB_ENV
           echo "ENVIRONMENT=${{ github.event.client_payload.environment }}" >> $GITHUB_ENV
 
       - name: Debug - Print environment variables
