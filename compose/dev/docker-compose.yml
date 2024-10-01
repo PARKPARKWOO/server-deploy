@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   reverse-proxy:
     image: traefik:v2.9
@@ -147,4 +145,5 @@ networks:
     driver: bridge
 
 volumes:
-  mysql-data:
+  barbellrobot-mysql-data:
+  find-my-pet-mysql-data:
