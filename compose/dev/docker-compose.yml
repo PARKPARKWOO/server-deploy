@@ -8,15 +8,31 @@ services:
       - "--providers.docker=true"
       - "--entrypoints.web.address=:8080"
       - "--accesslog=true"
-#      - "--entrypoints.dashboard.address=:8081"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    #      - "--entrypoints.dashboard.address=:8081"
     ports:
       - "8080:8080"
+      - "443:443"
 #      - "8081:8081"
     networks:
       - internal_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+      - ./letsencrypt:/letsencrypt
+  find-my-pet-backend:
+    image:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
+      - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.find-my-pet-backend.entrypoints=web"
+      - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
+    networks:
+      - internal_network
+      - find-my-pet-backend
   barbellrobot-backend:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
@@ -24,8 +40,10 @@ services:
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`) || Host(`localhost`) || Host(`172.30.1.32`) || Host(`127.0.0.1`)"
       - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.barbellrobot-backend.entrypoints=web"
+      - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
     networks:
       - internal_network
+      - barbellrobot-backend
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -56,18 +74,30 @@ services:
     ports:
       - "6379:6379"
 
-  mysql:
+  barbell-robot-mysql:
     image: mysql:8.4
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
     networks:
-      - internal_network
+      - barbellrobot-backend
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - barbellrobot-mysql-data:/var/lib/mysql
+  find-my-pet-mysql:
+    image: mysql:8.4
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
+    restart: always
+    networks:
+      - find-my-pet-backend
+    ports:
+      - "3306:3306"
+    volumes:
+      - find-my-pet-mysql-data:/var/lib/mysql
   loki:
     image: grafana/loki:2.9.0
     # loki 접근은 외부에서 못하도록 설정
@@ -107,6 +137,10 @@ services:
       - internal_network
 
 networks:
+  barbellrobot-backend:
+    driver: bridge
+  find-my-pet-backend:
+    driver: bridge
   internal_network:
     driver: bridge
   external-network:

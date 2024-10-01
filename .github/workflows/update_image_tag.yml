@@ -96,4 +96,7 @@ jobs:
           REFRESH_SECRET_KEY: ${{ secrets.REFRESH_SECRET_KEY }}
           REFRESH_EXPIRE_MILLIS: ${{ secrets.REFRESH_EXPIRE_MILLIS }}
           CLOUD_FRONT_DOMAIN_NAME: ${{ secrets.CLOUD_FRONT_DOMAIN_NAME }}
+          FMP_GOOGLE_CLIENT_ID: ${{ secrets.FMP_GOOGLE_CLIENT_ID }}
+          FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
+          FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.APP_NAME }}"
