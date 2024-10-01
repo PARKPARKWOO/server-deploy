@@ -31,6 +31,21 @@ services:
     networks:
       - internal_network
       - find-my-pet-backend
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URI=find-my-pet-mysql
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
+      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
+      - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
   barbellrobot-backend:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
@@ -46,7 +61,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=mysql
+      - RDBMS_URI=barbell-robot-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - GMAIL_USERNAME=${GMAIL_USERNAME}
@@ -80,8 +95,6 @@ services:
     restart: always
     networks:
       - barbellrobot-backend
-    ports:
-      - "3306:3306"
     volumes:
       - barbellrobot-mysql-data:/var/lib/mysql
   find-my-pet-mysql:
@@ -92,8 +105,6 @@ services:
     restart: always
     networks:
       - find-my-pet-backend
-    ports:
-      - "3306:3306"
     volumes:
       - find-my-pet-mysql-data:/var/lib/mysql
   loki:
