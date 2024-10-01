@@ -74,7 +74,7 @@ services:
 
   barbell-robot-mysql:
     image: mysql:8.4
-    container_name: mysql
+    container_name: barbell-robot-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
@@ -86,7 +86,7 @@ services:
       - barbellrobot-mysql-data:/var/lib/mysql
   find-my-pet-mysql:
     image: mysql:8.4
-    container_name: mysql
+    container_name: find-my-pet-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
