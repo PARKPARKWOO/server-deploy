@@ -24,7 +24,7 @@ services:
     image: 'wy9295/find-my-pet-backend:1884ab192dfefce0d31c22f25ffc9a1c66773e24'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
+      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`) || Host(`find-my-pet.duckdns.org:8080`)"
       - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.find-my-pet-backend.entrypoints=web,websecure"
       - "traefik.http.routers.find-my-pet-backend.tls=true"
@@ -54,7 +54,7 @@ services:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
+      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`) || Host(`wooyoung.duckdns.org:8080`)"
       - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.barbellrobot-backend.entrypoints=web,websecure"
       - "traefik.http.routers.barbellrobot-backend.tls=true"
