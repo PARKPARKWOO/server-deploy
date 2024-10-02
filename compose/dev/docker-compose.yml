@@ -25,11 +25,12 @@ services:
     image: 'wy9295/find-my-pet-backend:1884ab192dfefce0d31c22f25ffc9a1c66773e24'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`) || Host(`find-my-pet.duckdns.org:8080`)"
+      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
       - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
-      - "traefik.http.routers.find-my-pet-backend.entrypoints=web,websecure"
+      - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
       - "traefik.http.routers.find-my-pet-backend.tls=true"
       - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
+      - "traefik.docker.network=websecure"
     networks:
       - internal_network
       - find-my-pet-backend
@@ -57,9 +58,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
       - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
-      - "traefik.http.routers.barbellrobot-backend.entrypoints=web,websecure"
+      - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
       - "traefik.http.routers.barbellrobot-backend.tls=true"
       - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
+      - "traefik.docker.network=websecure"
     networks:
       - internal_network
       - barbellrobot-backend
