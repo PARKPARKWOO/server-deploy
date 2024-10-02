@@ -2,9 +2,9 @@ services:
   reverse-proxy:
     image: traefik:v2.9
     command:
-#      - "--api.insecure=true"
+      - "--api.insecure=true"
       - "--providers.docker=true"
-      - "--entrypoints.web.address=:8080"
+      - "--entrypoints.web.address=:80"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
@@ -14,6 +14,7 @@ services:
     ports:
       - "8080:8080"
       - "443:443"
+      - "80:80"
 #      - "8081:8081"
     networks:
       - internal_network
@@ -54,7 +55,7 @@ services:
     image: wy9295/barbellrobot-backend:da05e888f1454e5246c573da2cdf5014c95bd442
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`) || Host(`wooyoung.duckdns.org:8080`)"
+      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
       - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.barbellrobot-backend.entrypoints=web,websecure"
       - "traefik.http.routers.barbellrobot-backend.tls=true"
