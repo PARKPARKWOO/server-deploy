@@ -30,7 +30,7 @@ services:
       - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
       - "traefik.http.routers.find-my-pet-backend.tls=true"
       - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
-      - "traefik.docker.network=websecure"
+      - "traefik.docker.network=find-my-pet-backend"
     networks:
       - internal_network
       - find-my-pet-backend
@@ -61,7 +61,7 @@ services:
       - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
       - "traefik.http.routers.barbellrobot-backend.tls=true"
       - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
-      - "traefik.docker.network=websecure"
+      - "traefik.docker.network=barbellrobot-backend"
     networks:
       - internal_network
       - barbellrobot-backend
