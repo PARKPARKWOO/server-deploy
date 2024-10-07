@@ -68,7 +68,7 @@ services:
       - internal_network
       - barbellrobot-backend
     volumes:
-      - barbellrobot:/root/.config/gcloud/key.json
+      - /root/google/key.json:/root/.config/gcloud/key.json:ro
 
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/YOUR-KEY.json
@@ -170,6 +170,5 @@ networks:
     driver: bridge
 
 volumes:
-  barbellrobot:
   barbellrobot-mysql-data:
   find-my-pet-mysql-data:
