@@ -55,7 +55,7 @@ services:
       - FMP_GOOGLE_CLIENT_ID=${FMP_GOOGLE_CLIENT_ID}
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
   barbellrobot-backend:
-    image: 'wy9295/barbellrobot-backend:bddcc570792368ab82e730091565b6b3317a762b'
+    image: 'wy9295/barbellrobot-backend:ffd344eeba4178f63aaaeb61a20595c46b288e64'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
