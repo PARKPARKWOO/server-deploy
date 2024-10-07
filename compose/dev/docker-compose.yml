@@ -71,7 +71,6 @@ services:
       - /root/google/key.json:/root/.config/gcloud/key.json:ro
 
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/YOUR-KEY.json
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
