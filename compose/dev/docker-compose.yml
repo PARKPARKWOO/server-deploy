@@ -55,7 +55,7 @@ services:
       - FMP_GOOGLE_CLIENT_ID=${FMP_GOOGLE_CLIENT_ID}
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
   barbellrobot-backend:
-    image: 'wy9295/barbellrobot-backend:55b676e0f33e8010dc09c99cfdb4707aef32b455'
+    image: 'wy9295/barbellrobot-backend:private3'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
@@ -68,7 +68,7 @@ services:
       - internal_network
       - barbellrobot-backend
     volumes:
-      - ./path/to/YOUR-KEY.json:/root/.config/gcloud/YOUR-KEY.json
+      - barbellrobot:/root/.config/gcloud/key.json
 
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/YOUR-KEY.json
@@ -170,5 +170,6 @@ networks:
     driver: bridge
 
 volumes:
+  barbellrobot:
   barbellrobot-mysql-data:
   find-my-pet-mysql-data:
