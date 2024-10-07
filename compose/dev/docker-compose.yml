@@ -15,7 +15,7 @@ services:
       - "8080:8080"
       - "443:443"
       - "80:80"
-#      - "8081:8081"
+    #      - "8081:8081"
     networks:
       - internal_network
       - find-my-pet-backend
@@ -69,7 +69,7 @@ services:
       - barbellrobot-backend
     volumes:
       - /root/google/key.json:/root/.config/gcloud/key.json:ro
-
+    command: [ "sh", "-c", "gcloud auth activate-service-account --key-file=/root/.config/gcloud/key.json && java -jar app.jar" ]
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -94,7 +94,7 @@ services:
     container_name: redis
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
     networks:
       - internal_network
     ports:
