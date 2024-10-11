@@ -24,7 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:b667ac5b00687e121ed967fc2a7d03e70723aa40'
+    image: 'wy9295/find-my-pet-backend:799921a807727f9a4f59b76def6259c8cacbb6ce'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
