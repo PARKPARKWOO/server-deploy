@@ -155,14 +155,15 @@ services:
         /run.sh
     image: grafana/grafana:latest
     labels:
+      - "traefik.enable=true"
       - "traefik.docker.network=internal_network"
       - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
-      - "traefik.http.middlewares.my-local.ipallowlist.sourcerange=${IP_ALLOW_LIST}"
+      - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
+      - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls=true"
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
-      - "traefik.enable=true"
     networks:
       - internal_network
 
