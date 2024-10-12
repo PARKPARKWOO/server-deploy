@@ -2,10 +2,12 @@ services:
   reverse-proxy:
     image: traefik:v2.9
     container_name: dev_traefik
+    # TODO: dashboard port change
     command:
-      - "--api.insecure=true"
+#      - "--api.insecure=true"
+      - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
+#      - "--entrypoints.web.address=:80"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
@@ -16,11 +18,10 @@ services:
       - "--metrics.prometheus.addServicesLabels=true"
       - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
       - "--metrics.prometheus.entryPoint=metrics"
-    #      - "--entrypoints.dashboard.address=:8081"
     ports:
       - "8080:8080"
       - "443:443"
-      - "80:80"
+#      - "80:80"
     #      - "8081:8081"
     networks:
       - internal_network
