@@ -31,5 +31,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Deploy Loki and Grafana with Docker Compose
+        env:
+          IP_ALLOW_LIST: ${{ secret.IP_ALLOW_LIST }}
         shell: bash
         run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d loki grafana
