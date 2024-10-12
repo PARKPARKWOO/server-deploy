@@ -4,12 +4,12 @@ global:
 scrape_configs:
   - job_name: 'dev_traefik'
     static_configs:
-      - targets: ['dev_traefik']
+      - targets: ['dev_traefik:8080']
   - job_name: 'dev_bbr_backend'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'dev_bbr_backend' ]
+      - targets: [ 'dev_bbr_backend:8080' ]
   - job_name: 'dev_fmp_backend'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'dev_fmp_backend' ]
+      - targets: [ 'dev_fmp_backend:8080' ]
