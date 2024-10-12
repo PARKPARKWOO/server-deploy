@@ -34,4 +34,4 @@ jobs:
         env:
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
         shell: bash
-        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d loki grafana
+        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d loki grafana prometheus
