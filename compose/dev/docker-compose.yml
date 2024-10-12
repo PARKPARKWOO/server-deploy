@@ -133,6 +133,7 @@ services:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - IP_ALLOW_LIST=${IP_ALLOW_LIST}
     entrypoint:
       - sh
       - -euc
@@ -153,8 +154,14 @@ services:
         EOF
         /run.sh
     image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+    labels:
+      - "traefik.docker.network=internal_network"
+      - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
+      - "traefik.http.middlewares.my-local.ipallowlist.sourcerange=${IP_ALLOW_LIST}"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
     networks:
       - internal_network
 
