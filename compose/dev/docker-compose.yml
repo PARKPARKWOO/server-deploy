@@ -1,6 +1,7 @@
 services:
   reverse-proxy:
     image: traefik:v2.9
+    container_name: dev_traefik
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -10,6 +11,11 @@ services:
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--metrics.prometheus.entryPoint=metrics"
     #      - "--entrypoints.dashboard.address=:8081"
     ports:
       - "8080:8080"
@@ -23,8 +29,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
+  # service
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:e81fa02944c64be6b2ff1d9ee1da8d4950b76619'
+    container_name: dev_fmp_backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
@@ -40,7 +48,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=find-my-pet-mysql
+      - RDBMS_URI=dev_fmp_mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
@@ -56,6 +64,7 @@ services:
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:91e5ca2c28cb37e29d43965f9c5c0a3503d41ec2'
+    container_name: dev_bbr_backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
@@ -74,7 +83,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=barbell-robot-mysql
+      - RDBMS_URI=dev_bbr_mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - GMAIL_USERNAME=${GMAIL_USERNAME}
@@ -89,6 +98,7 @@ services:
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
+  # Databases
   redis:
     image: redis:latest
     container_name: redis
@@ -99,10 +109,9 @@ services:
       - internal_network
     ports:
       - "6379:6379"
-
   barbell-robot-mysql:
     image: mysql:8.4
-    container_name: barbell-robot-mysql
+    container_name: dev_bbr_mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
@@ -112,7 +121,7 @@ services:
       - barbellrobot-mysql-data:/var/lib/mysql
   find-my-pet-mysql:
     image: mysql:8.4
-    container_name: find-my-pet-mysql
+    container_name: dev_fmp_mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
@@ -120,15 +129,30 @@ services:
       - find-my-pet-backend
     volumes:
       - find-my-pet-mysql-data:/var/lib/mysql
+  # Observability
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./compose/dev/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - traefik
+      - find-my-pet-backend
+      - barbellrobot-backend
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - internal_network
   loki:
     image: grafana/loki:2.9.0
-    # loki 접근은 외부에서 못하도록 설정
-    ports:
-      - "3100:3100"
+    container_name: loki
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - internal_network
   grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -153,7 +177,6 @@ services:
           editable: false
         EOF
         /run.sh
-    image: grafana/grafana:latest
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=internal_network"
