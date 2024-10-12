@@ -137,7 +137,7 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - traefik
+      - reverse-proxy
       - find-my-pet-backend
       - barbellrobot-backend
     labels:
