@@ -162,6 +162,7 @@ services:
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls=true"
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+      - "traefik.enable=true"
     networks:
       - internal_network
 
