@@ -1,7 +1,7 @@
 services:
   reverse-proxy:
     image: traefik:v2.9
-    container_name: dev_traefik
+    container_name: dev-traefik
     # TODO: dashboard port change
     command:
 #      - "--api.insecure=true"
@@ -33,7 +33,7 @@ services:
   # service
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:3bf9473b1a47ee73f1f0b6a9db4b98bdeb269241'
-    container_name: dev_fmp_backend
+    container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
@@ -49,7 +49,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=dev_fmp_mysql
+      - RDBMS_URI=dev-fmp-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
@@ -65,7 +65,7 @@ services:
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:de314e14bf25a2acf39f94d6e1bdd307184b4ce3'
-    container_name: dev_bbr_backend
+    container_name: dev-bbr-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
@@ -84,7 +84,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=dev_bbr_mysql
+      - RDBMS_URI=dev-bbr-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - GMAIL_USERNAME=${GMAIL_USERNAME}
@@ -112,7 +112,7 @@ services:
       - "6379:6379"
   barbell-robot-mysql:
     image: mysql:8.4
-    container_name: dev_bbr_mysql
+    container_name: dev-bbr-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
@@ -122,7 +122,7 @@ services:
       - barbellrobot-mysql-data:/var/lib/mysql
   find-my-pet-mysql:
     image: mysql:8.4
-    container_name: dev_fmp_mysql
+    container_name: dev-fmp-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
