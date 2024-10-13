@@ -32,7 +32,7 @@ services:
       - ./letsencrypt:/letsencrypt
   # service
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:3bf9473b1a47ee73f1f0b6a9db4b98bdeb269241'
+    image: 'wy9295/find-my-pet-backend:55235698a81314fc2735619f544d885d7f50c079'
     container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
