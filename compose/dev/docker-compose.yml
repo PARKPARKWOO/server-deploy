@@ -30,6 +30,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki:3100/loki/api/v1/push"
+        loki-external-labels: "job=traefik"
   # service
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:20096accf4e7d16b6bde571a8f93d0ba975c7010'
