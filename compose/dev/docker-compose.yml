@@ -64,7 +64,7 @@ services:
       - FMP_GOOGLE_CLIENT_ID=${FMP_GOOGLE_CLIENT_ID}
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
   barbellrobot-backend:
-    image: 'wy9295/barbellrobot-backend:1b4343448973f257ab01888e34ec06d819a9994b'
+    image: 'wy9295/barbellrobot-backend:2dae0b6555d01676e3f5e957bc12fa99914bbd03'
     container_name: dev-bbr-backend
     labels:
       - "traefik.enable=true"
