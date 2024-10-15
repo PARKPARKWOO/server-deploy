@@ -1,6 +1,6 @@
 api:
-  dashboard: true
-  insecure: true
+  dashboard: false
+  insecure: false
 
 entryPoints:
   web:
@@ -12,6 +12,13 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: wy9295@naver.com
+      storage: /letsencrypt/acme.json
+      tlsChallenge: {}
 
 log:
   level: INFO

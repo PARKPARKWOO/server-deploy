@@ -24,7 +24,7 @@ services:
 #      - "80:80"
     #      - "8081:8081"
     networks:
-      - internal_network
+      - internal-network
       - find-my-pet-backend
       - barbellrobot-backend
     volumes:
@@ -49,7 +49,7 @@ services:
       - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
       - "traefik.docker.network=find-my-pet-backend"
     networks:
-      - internal_network
+      - internal-network
       - find-my-pet-backend
     environment:
       - REDIS_PORT=6379
@@ -81,7 +81,7 @@ services:
       - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
       - "traefik.docker.network=barbellrobot-backend"
     networks:
-      - internal_network
+      - internal-network
       - barbellrobot-backend
     volumes:
       - /root/google/key.json:/root/.config/gcloud/key.json:ro
@@ -113,7 +113,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
     networks:
-      - internal_network
+      - internal-network
     ports:
       - "6379:6379"
   barbell-robot-mysql:
@@ -151,13 +151,13 @@ services:
     labels:
       - "traefik.enable=false"
     networks:
-      - internal_network
+      - internal-network
   loki:
     image: grafana/loki:2.9.0
     container_name: loki
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - internal_network
+      - internal-network
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -189,7 +189,7 @@ services:
         /run.sh
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=internal_network"
+      - "traefik.docker.network=internal-network"
       - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
       - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
       - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
@@ -198,14 +198,14 @@ services:
       - "traefik.http.routers.grafana.tls=true"
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
     networks:
-      - internal_network
+      - internal-network
 
 networks:
   barbellrobot-backend:
     driver: bridge
   find-my-pet-backend:
     driver: bridge
-  internal_network:
+  internal-network:
     driver: bridge
   external-network:
     driver: bridge
