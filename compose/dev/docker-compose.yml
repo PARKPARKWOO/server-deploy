@@ -203,12 +203,16 @@ services:
 networks:
   barbellrobot-backend:
     driver: bridge
+    name: barbellrobot-backend
   find-my-pet-backend:
     driver: bridge
+    name: find-my-pet-backend
   internal-network:
     driver: bridge
+    name: internal-network
   external-network:
     driver: bridge
+    name: external-network
 
 volumes:
   barbellrobot-mysql-data:
