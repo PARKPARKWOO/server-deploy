@@ -38,7 +38,7 @@ services:
         loki-external-labels: "job=traefik"
   # service
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:72e2b510676000872e035233f634e69849a090f7'
+    image: 'wy9295/find-my-pet-backend:b99e3bfe0d0e37de151384c9dd2c8820397f2ab2'
     container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
