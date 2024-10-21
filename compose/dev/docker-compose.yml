@@ -30,7 +30,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
-      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+#      - ./traefik.yml:/etc/traefik/traefik.yml:ro
     logging:
       driver: loki
       options:
