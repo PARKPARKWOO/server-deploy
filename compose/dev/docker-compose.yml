@@ -37,12 +37,38 @@ services:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=traefik"
   # service
+  auth-server:
+    image:
+    container_name: dev-auth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth-server.priority=100"
+      - "traefik.http.routers.auth-server.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.services.auth-server.loadbalancer.server.port=8080"
+      - "traefik.http.routers.auth-server.entrypoints=websecure"
+      - "traefik.http.routers.auth-server.tls=true"
+      - "traefik.http.routers.auth-server.tls.certresolver=myresolver"
+      - "traefik.docker.network=internal-network"
+    networks:
+      - internal-network
+      - barbellrobot-backend
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URL=dev-bbr-mysql
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:d506170a85c020a0a8341331372d82f316142707'
     container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
+      - "traefik.http.routers.auth-service.rule=PathPrefix(`/api/v1/auth`)"
       - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
       - "traefik.http.routers.find-my-pet-backend.tls=true"
