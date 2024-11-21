@@ -43,7 +43,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.auth-server.priority=100"
-      - "traefik.http.routers.auth-server.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.auth-server.rule=Host(`woo-auth.duckdns.org`) && PathPrefix(`/api/v1/auth`)"
       - "traefik.http.services.auth-server.loadbalancer.server.port=8080"
       - "traefik.http.routers.auth-server.entrypoints=websecure"
       - "traefik.http.routers.auth-server.tls=true"
@@ -68,7 +68,7 @@ services:
     container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth-service.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
       - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
       - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
       - "traefik.http.routers.find-my-pet-backend.tls=true"
