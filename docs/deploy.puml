@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+actor developer
+cloud github {
+    package BackendRepositories {
+        database find_my_pet_backend_repository
+        database barbellrobot_backend_repository
+        database websocket_server_repository
+        database auth_server_repository
+
+            cloud application_workflows {
+                artifact static_code_analysis
+                artifact gradle_build_test
+                artifact docker_build_push
+                artifact deploy_workflows_trigger
+            }
+    }
+
+    database server_deploy_repository {
+        artifact application_image_update
+        artifact github_commit
+        artifact compose_up
+    }
+
+
+    database common_module_repository
+}
+node "Maven Repository" as MavenRepo {
+    [Maven Central]
+}
+node "Docker Hub" as DockerHub {
+    [Docker Registry]
+}
+
+cloud my_server {
+    folder private_env
+}
+
+developer -> github: commit & push
+common_module_repository --> MavenRepo : Publish Artifact
+MavenRepo --> BackendRepositories : Dependency
+
+' CI/CD Pipeline Steps
+BackendRepositories --> static_code_analysis : Run Code Analysis
+static_code_analysis --> gradle_build_test : Build Application
+gradle_build_test --> docker_build_push : Build Docker Image & Push
+docker_build_push --> DockerHub : Push Image
+docker_build_push --> deploy_workflows_trigger: WebHook Trigger
+deploy_workflows_trigger --> application_image_update
+application_image_update --> github_commit:  update docker-compose.yml and commit
+github_commit --> compose_up: container run
+
+' Deployment to Server
+compose_up -> my_server: deploy container
+
+DockerHub --> my_server : image pull
+@enduml
