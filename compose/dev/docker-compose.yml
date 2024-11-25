@@ -42,14 +42,19 @@ services:
     container_name: dev-auth
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth-server.priority=100"
-      - "traefik.http.routers.auth-server.rule=Host(`woo-auth.duckdns.org`)"
-      - "traefik.http.routers.auth-server.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
+      - "traefik.http.routers.auth-server-host.priority=100"
+      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
+      - "traefik.http.routers.auth-server-host.tls=true"
+      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
       - "traefik.http.services.auth-server.loadbalancer.server.port=8080"
-      - "traefik.http.routers.auth-server.entrypoints=websecure"
-      - "traefik.http.routers.auth-server.tls=true"
-      - "traefik.http.routers.auth-server.tls.certresolver=myresolver"
-      - "traefik.docker.network=internal-network"
+
+      - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.auth-server-path.priority=90"
+      - "traefik.http.routers.auth-server-path.entrypoints=websecure"
+      - "traefik.http.routers.auth-server-path.tls=true"
+      - "traefik.http.routers.auth-server-path.tls.certresolver=myresolver"
+      - "traefik.http.services.auth-server-path.loadbalancer.server.port=8080"
     networks:
       - internal-network
       - barbellrobot-backend
