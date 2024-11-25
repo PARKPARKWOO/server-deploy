@@ -47,7 +47,7 @@ services:
       - "traefik.http.routers.auth-server-host.entrypoints=websecure"
       - "traefik.http.routers.auth-server-host.tls=true"
       - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
-      - "traefik.http.services.auth-server.loadbalancer.server.port=8080"
+      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
 
       - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
       - "traefik.http.routers.auth-server-path.priority=90"
