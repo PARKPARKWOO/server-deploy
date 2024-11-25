@@ -4,10 +4,10 @@ services:
     container_name: dev-traefik
     # TODO: dashboard port change
     command:
-#      - "--api.insecure=true"
+      #      - "--api.insecure=true"
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
-#      - "--entrypoints.web.address=:80"
+      #      - "--entrypoints.web.address=:80"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
@@ -21,7 +21,7 @@ services:
     ports:
       - "8080:8080"
       - "443:443"
-#      - "80:80"
+    #      - "80:80"
     #      - "8081:8081"
     networks:
       - internal-network
@@ -30,7 +30,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
-#      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+    #      - ./traefik.yml:/etc/traefik/traefik.yml:ro
     logging:
       driver: loki
       options:
@@ -43,7 +43,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.auth-server.priority=100"
-      - "traefik.http.routers.auth-server.rule=Host(`woo-auth.duckdns.org`) && PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.auth-server.rule=Host(`woo-auth.duckdns.org`)"
+      - "traefik.http.routers.auth-server.rule=PathPrefix(`/api/v1/auth`)"
       - "traefik.http.services.auth-server.loadbalancer.server.port=8080"
       - "traefik.http.routers.auth-server.entrypoints=websecure"
       - "traefik.http.routers.auth-server.tls=true"
