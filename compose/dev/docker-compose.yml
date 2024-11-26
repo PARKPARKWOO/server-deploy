@@ -58,6 +58,7 @@ services:
       - "traefik.docker.network=internal-network"
     networks:
       - internal-network
+      - auth-server
       - barbellrobot-backend
     environment:
       - REDIS_PORT=6379
@@ -246,6 +247,9 @@ networks:
   external-network:
     driver: bridge
     name: external-network
+  auth-server:
+    driver: bridge
+    name: auth-server
 
 volumes:
   barbellrobot-mysql-data:
