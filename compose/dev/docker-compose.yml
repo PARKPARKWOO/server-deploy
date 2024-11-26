@@ -55,6 +55,7 @@ services:
       - "traefik.http.routers.auth-server-path.tls=true"
       - "traefik.http.routers.auth-server-path.tls.certresolver=myresolver"
       - "traefik.http.services.auth-server-path.loadbalancer.server.port=8080"
+      - "traefik.docker.network=internal-network"
     networks:
       - internal-network
       - barbellrobot-backend
