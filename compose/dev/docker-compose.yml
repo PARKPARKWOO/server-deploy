@@ -73,7 +73,7 @@ services:
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:1ff4eccd992c9a0d921d98439a6828c98766ca72'
+    image: 'wy9295/find-my-pet-backend:df59b35269b10c48e7fcddb682b006471a21ccab'
     container_name: dev-fmp-backend
     labels:
       - "traefik.enable=true"
