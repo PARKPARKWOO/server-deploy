@@ -240,7 +240,7 @@ services:
     container_name: dev-gateway
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`, `find-my-pet.duckdns.org`, wooyoung.duckdns.org)"
+      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
       - "traefik.http.services.gateway.loadbalancer.server.port=8080"
       - "traefik.http.routers.gateway.entrypoints=websecure"
       - "traefik.http.routers.gateway.tls=true"
