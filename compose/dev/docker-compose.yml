@@ -28,6 +28,7 @@ services:
       - find-my-pet-backend
       - barbellrobot-backend
       - auth-server
+      - gateway
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
@@ -244,9 +245,10 @@ services:
       - "traefik.http.routers.gateway.entrypoints=websecure"
       - "traefik.http.routers.gateway.tls=true"
       - "traefik.http.routers.gateway.tls.certresolver=myresolver"
-      - "traefik.docker.network=internal-network"
+      - "traefik.docker.network=gateway"
     networks:
       - internal-network
+      - gateway
     environment:
       - BBR_HOST=dev-bbr-backend
       - FMP_HOST=dev-fmp-backend
@@ -268,6 +270,9 @@ networks:
   auth-server:
     driver: bridge
     name: auth-server
+  gateway:
+    driver: bridge
+    name: gateway
 
 volumes:
   barbellrobot-mysql-data:
