@@ -41,14 +41,14 @@ services:
   auth-server:
     image: 'wy9295/auth-server:17316a806ec1af7f62b97809c64207ae15cca8a6'
     container_name: dev-auth
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
-      - "traefik.http.routers.auth-server-host.priority=100"
-      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
-      - "traefik.http.routers.auth-server-host.tls=true"
-      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
-      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
+#      - "traefik.http.routers.auth-server-host.priority=100"
+#      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
+#      - "traefik.http.routers.auth-server-host.tls=true"
+#      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
+#      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
 
 #      - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
 #      - "traefik.http.routers.auth-server-path.priority=90"
@@ -56,7 +56,7 @@ services:
 #      - "traefik.http.routers.auth-server-path.tls=true"
 #      - "traefik.http.routers.auth-server-path.tls.certresolver=myresolver"
 #      - "traefik.http.services.auth-server-path.loadbalancer.server.port=8080"
-      - "traefik.docker.network=internal-network"
+#      - "traefik.docker.network=internal-network"
     networks:
       - internal-network
       - auth-server
@@ -75,14 +75,14 @@ services:
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:df59b35269b10c48e7fcddb682b006471a21ccab'
     container_name: dev-fmp-backend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
-      - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
-      - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
-      - "traefik.http.routers.find-my-pet-backend.tls=true"
-      - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
-      - "traefik.docker.network=find-my-pet-backend"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
+#      - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
+#      - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
+#      - "traefik.http.routers.find-my-pet-backend.tls=true"
+#      - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
+#      - "traefik.docker.network=find-my-pet-backend"
     networks:
       - internal-network
       - find-my-pet-backend
@@ -107,14 +107,14 @@ services:
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
     container_name: dev-bbr-backend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
-      - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
-      - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
-      - "traefik.http.routers.barbellrobot-backend.tls=true"
-      - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
-      - "traefik.docker.network=barbellrobot-backend"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
+#      - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
+#      - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
+#      - "traefik.http.routers.barbellrobot-backend.tls=true"
+#      - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
+#      - "traefik.docker.network=barbellrobot-backend"
     networks:
       - internal-network
       - barbellrobot-backend
@@ -234,6 +234,23 @@ services:
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
     networks:
       - internal-network
+  gateway:
+    image:
+    container_name: dev-gateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`, `find-my-pet.duckdns.org`, wooyoung.duckdns.org)"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+      - "traefik.http.routers.gateway.entrypoints=websecure"
+      - "traefik.http.routers.gateway.tls=true"
+      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+      - "traefik.docker.network=internal-network"
+    networks:
+      - internal-network
+    environment:
+      - BBR_HOST=dev-bbr-backend
+      - FMP_HOST=dev-fmp-backend
+      - AUTH_HOST=dev-auth
 
 networks:
   barbellrobot-backend:
