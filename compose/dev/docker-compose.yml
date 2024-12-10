@@ -253,6 +253,11 @@ services:
       - BBR_HOST=dev-bbr-backend
       - FMP_HOST=dev-fmp-backend
       - AUTH_HOST=dev-auth
+  eureka:
+    image:
+    container_name: dev-eureka
+    networks:
+      - internal-network
 
 networks:
   barbellrobot-backend:
