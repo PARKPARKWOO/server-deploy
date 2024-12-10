@@ -256,6 +256,8 @@ services:
   eureka:
     image:
     container_name: dev-eureka
+    ports:
+      - "8761:8761"
     networks:
       - internal-network
 
