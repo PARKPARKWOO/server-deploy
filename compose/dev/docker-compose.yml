@@ -254,7 +254,7 @@ services:
       - FMP_HOST=dev-fmp-backend
       - AUTH_HOST=dev-auth
   eureka:
-    image:
+    image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
     container_name: dev-eureka
     ports:
       - "8761:8761"
