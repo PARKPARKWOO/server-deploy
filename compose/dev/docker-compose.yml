@@ -73,7 +73,7 @@ services:
       - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
-      - EUREKA_URI=http://dev-eureka/eureka
+      - EUREKA_URI=http://dev-eureka:8761/eureka
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:df59b35269b10c48e7fcddb682b006471a21ccab'
     container_name: dev-fmp-backend
