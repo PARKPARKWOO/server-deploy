@@ -6,7 +6,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  restricted-workflow:
+    name: Run Restricted Workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Restricted Workflow
+        run: echo "Restricted Workflow triggered"
+
   commit-changes:
+    needs: restricted-workflow
     permissions: write-all
     runs-on: ubuntu-latest
     steps:

@@ -1,0 +1,16 @@
+name: Restricted Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restricted-job:
+    runs-on: ubuntu-latest
+    if: github.actor == 'your-github-username'
+
+    steps:
+      - name: Validate User
+        run: echo "Authorized user:${{ github.actor }}"
+
+      - name: Execute Task
+        run: echo "This is the restricted workflow."
