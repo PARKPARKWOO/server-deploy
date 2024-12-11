@@ -17,3 +17,7 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: [ 'dev-auth:8080' ]
+  - job_name: 'dev-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'dev-gateway:8080' ]
