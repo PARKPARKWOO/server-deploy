@@ -23,4 +23,4 @@ scrape_configs:
       - targets: [ 'dev-gateway:8080' ]
   - job_name: 'infra'
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: ['localhost:9100']
