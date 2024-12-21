@@ -254,6 +254,7 @@ services:
       - BBR_HOST=dev-bbr-backend
       - FMP_HOST=dev-fmp-backend
       - AUTH_HOST=dev-auth
+      - EUREKA_URI=http://dev-eureka:8761/eureka
   eureka:
     image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
     container_name: dev-eureka
