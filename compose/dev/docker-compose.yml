@@ -106,6 +106,7 @@ services:
       - FMP_KAKAO_CLIENT_ID=${FMP_KAKAO_CLIENT_ID}
       - FMP_GOOGLE_CLIENT_ID=${FMP_GOOGLE_CLIENT_ID}
       - FMP_GOOGLE_CLIENT_SECRET=${FMP_GOOGLE_CLIENT_SECRET}
+      - AUTH_HOST=dev-auth
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
     container_name: dev-bbr-backend
