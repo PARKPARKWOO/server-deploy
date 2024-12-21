@@ -143,6 +143,7 @@ services:
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
+      - EUREKA_URI=http://dev-eureka:8761/eureka
   # Databases
   redis:
     image: redis:latest
