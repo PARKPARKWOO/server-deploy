@@ -75,7 +75,7 @@ services:
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - EUREKA_URI=http://dev-eureka:8761/eureka
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:0c35f20b68cbd64437f40306d2e862f2c673b4cd'
+    image: 'wy9295/find-my-pet-backend:b8db26966819a76c06e4912b419f9d0d872482ad'
     container_name: dev-fmp-backend
 #    labels:
 #      - "traefik.enable=true"
