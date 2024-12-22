@@ -240,7 +240,7 @@ services:
     networks:
       - internal-network
   gateway:
-    image: 'wy9295/gateway:efdf89c4904e6ef4bd0e3f9ce1cd617cf0534b06'
+    image: 'wy9295/gateway:da61cb133adf73b0a8c96d6a0c15c75f84e3243a'
     container_name: dev-gateway
     labels:
       - "traefik.enable=true"
