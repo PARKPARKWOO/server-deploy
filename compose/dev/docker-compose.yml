@@ -8,6 +8,7 @@ services:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
       #      - "--entrypoints.web.address=:80"
+      - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
@@ -231,7 +232,8 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=internal-network"
       - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
-      - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
+#      FIXME: 개발을 위해 잠시 주석처리
+#      - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
       - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.entrypoints=websecure"
