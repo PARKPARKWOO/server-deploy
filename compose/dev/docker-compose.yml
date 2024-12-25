@@ -43,14 +43,14 @@ services:
   auth-server:
     image: 'wy9295/auth-server:7709810bb2470ed4af58f3bedcf5267d35e81f44'
     container_name: dev-auth
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
-#      - "traefik.http.routers.auth-server-host.priority=100"
-#      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
-#      - "traefik.http.routers.auth-server-host.tls=true"
-#      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
-#      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
+      - "traefik.http.routers.auth-server-host.priority=100"
+      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
+      - "traefik.http.routers.auth-server-host.tls=true"
+      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
+      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
 
 #      - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
 #      - "traefik.http.routers.auth-server-path.priority=90"
