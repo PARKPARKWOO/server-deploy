@@ -234,7 +234,7 @@ services:
       - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
 #      FIXME: 개발을 위해 잠시 주석처리
 #      - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
-      - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
+#      - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls=true"
