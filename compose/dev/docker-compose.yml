@@ -271,6 +271,7 @@ services:
     container_name: dev-eureka
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.eureka.rule=Host(`wooyoung.duckdns.org`)"
       - "traefik.http.routers.eureka.entrypoints=eureka"
       - "traefik.http.services.eureka.loadbalancer.server.port=8761"
     ports:
