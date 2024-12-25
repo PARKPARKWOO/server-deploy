@@ -250,14 +250,14 @@ services:
   gateway:
     image: 'wy9295/gateway:1c889ae781deffc5d3b6e553afc6df78d51610b8'
     container_name: dev-gateway
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
-      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
-      - "traefik.http.routers.gateway.entrypoints=websecure"
-      - "traefik.http.routers.gateway.tls=true"
-      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
-      - "traefik.docker.network=gateway"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
+#      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+#      - "traefik.http.routers.gateway.entrypoints=websecure"
+#      - "traefik.http.routers.gateway.tls=true"
+#      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+#      - "traefik.docker.network=gateway"
     networks:
       - internal-network
       - gateway

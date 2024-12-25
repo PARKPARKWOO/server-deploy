@@ -1,4 +1,4 @@
-name: Deploy via All Container
+name: Deploy Selected Containers
 
 on:
   workflow_dispatch:
@@ -11,6 +11,25 @@ on:
         options:
           - dev
           - prod
+      services:
+        description: "Select services to deploy (comma-separated if multiple)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - reverse-proxy
+          - auth-server
+          - find-my-pet-backend
+          - barbellrobot-backend
+          - redis
+          - barbell-robot-mysql
+          - find-my-pet-mysql
+          - prometheus
+          - loki
+          - grafana
+          - gateway
+          - eureka
+          - node_exporter
 
 jobs:
   deploy:
@@ -23,6 +42,7 @@ jobs:
         shell: bash
         run: |
           echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "SERVICES=${{ inputs.services }}" >> $GITHUB_ENV
 
       - name: Docker Hub login
         uses: docker/login-action@v2
@@ -30,7 +50,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Deploy all services with Docker Compose
+      - name: Deploy selected services with Docker Compose
         shell: bash
         env:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
@@ -54,4 +74,11 @@ jobs:
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
-        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
+        run: |
+          if [[ "${{ env.SERVICES }}" == "all" ]]; then
+            echo "Deploying all services..."
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
+          else
+            echo "Deploying selected service: ${{ env.SERVICES }}"
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.SERVICES }}"
+          fi
