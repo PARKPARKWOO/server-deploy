@@ -63,6 +63,8 @@ services:
       - internal-network
       - auth-server
       - barbellrobot-backend
+    depends_on:
+      - barbell-robot-mysql
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -89,6 +91,8 @@ services:
     networks:
       - internal-network
       - find-my-pet-backend
+    depends_on:
+      - find-my-pet-mysql
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -123,6 +127,8 @@ services:
     networks:
       - internal-network
       - barbellrobot-backend
+    depends_on:
+      - barbell-robot-mysql
     volumes:
       - /root/google/key.json:/root/.config/gcloud/key.json:ro
     command: [ "sh", "-c", "gcloud auth activate-service-account --key-file=/root/.config/gcloud/key.json && java -jar app.jar" ]
