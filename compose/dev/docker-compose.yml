@@ -249,7 +249,7 @@ services:
     networks:
       - internal-network
   pyroscope:
-    image: pyroscope/pyroscope:latest
+    image: grafana/pyroscope:latest
     container_name: pyroscope
     ports:
       - "4040:4040"
