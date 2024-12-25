@@ -30,6 +30,7 @@ on:
           - gateway
           - eureka
           - node_exporter
+          - pyroscope
 
 jobs:
   deploy:
