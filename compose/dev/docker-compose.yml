@@ -269,6 +269,10 @@ services:
   eureka:
     image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
     container_name: dev-eureka
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.eureka.entrypoints=eureka"
+      - "traefik.http.services.eureka.loadbalancer.server.port=8761"
     ports:
       - "8761:8761"
     networks:
