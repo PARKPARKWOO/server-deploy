@@ -91,7 +91,6 @@ jobs:
         env:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-          RDBMS_URI: ${{ secrets.RDBMS_URI }}
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
           RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
           GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
