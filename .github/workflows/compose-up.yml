@@ -24,6 +24,7 @@ on:
           - redis
           - barbell-robot-mysql
           - find-my-pet-mysql
+          - kafka1
           - prometheus
           - loki
           - grafana
