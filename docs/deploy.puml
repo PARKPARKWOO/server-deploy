@@ -8,6 +8,8 @@ cloud github {
         database barbellrobot_backend_repository
         database websocket_server_repository
         database auth_server_repository
+        database gateway_repository
+        database eureka_repository
 
             cloud application_workflows {
                 artifact static_code_analysis
