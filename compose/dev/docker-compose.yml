@@ -41,7 +41,7 @@ services:
         loki-external-labels: "job=traefik"
   # service
   auth-server:
-    image: 'wy9295/auth-server:b6a41444eee88c66fe03e6260d79eaf799928b68'
+    image: 'wy9295/auth-server:205363ba2bd94491d6d3c8aa9cb69a49c7b9ec30'
     container_name: dev-auth
 #    labels:
 #      - "traefik.enable=true"
