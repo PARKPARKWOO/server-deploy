@@ -1,0 +1,92 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dev-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - reverse-proxy
+      - find-my-pet-backend
+      - barbellrobot-backend
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - internal-network
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - internal-network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - IP_ALLOW_LIST=${IP_ALLOW_LIST}
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=internal-network"
+      - "traefik.http.routers.grafana.rule=Host(`wrafana.duckdns.org`)"
+      #      FIXME: 개발을 위해 잠시 주석처리
+      #      - "traefik.http.middlewares.grafana-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
+      #      - "traefik.http.routers.grafana.middlewares=grafana-ipwhitelist@docker"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+    networks:
+      - internal-network
+  pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: pyroscope
+    ports:
+      - "4040:4040"
+    networks:
+      - internal-network
+    environment:
+      - PYROSCOPE_LOG_LEVEL=info
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node-exporter
+    command:
+      - '--path.rootfs=/host'
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    driver: bridge
+    name: internal-network
+
+
+volumes:
+  grafana_data:

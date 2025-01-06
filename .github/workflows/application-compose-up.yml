@@ -1,4 +1,4 @@
-name: Deploy Selected Containers
+name: Deploy Selected Server Containers
 
 on:
   workflow_dispatch:
@@ -17,21 +17,11 @@ on:
         default: "all"
         type: choice
         options:
-          - reverse-proxy
           - auth-server
           - find-my-pet-backend
           - barbellrobot-backend
-          - redis
-          - barbell-robot-mysql
-          - find-my-pet-mysql
-          - kafka1
-          - prometheus
-          - loki
-          - grafana
           - gateway
           - eureka
-          - node_exporter
-          - pyroscope
 
 jobs:
   deploy:
@@ -78,8 +68,8 @@ jobs:
         run: |
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
             echo "Deploying all services..."
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.SERVICES }}"
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.SERVICES }}"
           fi

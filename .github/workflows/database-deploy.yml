@@ -11,7 +11,15 @@ on:
         options:
           - dev
           - prod
-
+      services:
+        description: "Select services to deploy (comma-separated if multiple)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - redis
+          - find-my-pet-mysql
+          - barbell-robot-mysql
 jobs:
   deploy-databases:
     runs-on: [self-hosted, label-deploy]
@@ -36,4 +44,11 @@ jobs:
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
           RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d barbell-robot-mysql redis find-my-pet-mysql
+        run: |
+          if [[ "${{ env.SERVICES }}" == "all" ]]; then
+            echo "Deploying all services..."
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" up -d
+          else
+            echo "Deploying selected service: ${{ env.SERVICES }}"
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" up -d "${{ env.SERVICES }}"
+          fi
