@@ -51,8 +51,6 @@ services:
     networks:
       - internal-network
       - find-my-pet-backend
-    depends_on:
-      - find-my-pet-mysql
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -80,8 +78,6 @@ services:
     networks:
       - internal-network
       - barbellrobot-backend
-    depends_on:
-      - barbell-robot-mysql
     volumes:
       - /root/google/key.json:/root/.config/gcloud/key.json:ro
     command: [ "sh", "-c", "gcloud auth activate-service-account --key-file=/root/.config/gcloud/key.json && java -jar app.jar" ]
@@ -158,8 +154,3 @@ networks:
   gateway:
     driver: bridge
     name: gateway
-
-volumes:
-  barbellrobot-mysql-data:
-  find-my-pet-mysql-data:
-  grafana_data:
