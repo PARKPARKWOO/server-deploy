@@ -104,7 +104,7 @@ services:
       - EUREKA_URI=http://dev-eureka:8761/eureka
   #  discovery
   gateway:
-    image: 'wy9295/gateway:efe2f0b07df2bf026bb124d648a9b8e468a43357'
+    image: 'wy9295/gateway:5e044c881adc7228f27f9b5f5831033d062223ad'
     container_name: dev-gateway
     labels:
       - "traefik.enable=true"
