@@ -135,7 +135,7 @@ services:
     networks:
       - internal-network
   orchestrator:
-    image: 'wy9295/orchestrator:7ef19c38626b75ef854f3256cbd75216a43e8d08'
+    image: 'wy9295/orchestrator:27673a41f5479cf10bc2b33af087cd08e3ae6d19'
     container_name: dev-orchestrator
     networks:
       - internal-network
