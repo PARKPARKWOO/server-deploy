@@ -63,6 +63,7 @@ services:
       - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
       - AUTH_HOST=auth
+      - KAFKA_HOST=kafka1:9092
       - EUREKA_URI=http://dev-eureka:8761/eureka
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
