@@ -17,6 +17,7 @@ on:
         default: "all"
         type: choice
         options:
+          - orchestrator
           - auth-server
           - find-my-pet-backend
           - barbellrobot-backend
