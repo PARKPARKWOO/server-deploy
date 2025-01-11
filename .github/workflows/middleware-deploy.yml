@@ -38,14 +38,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Deploy Traefik with Docker Compose
+      - name: Deploy with Docker Compose
         shell: bash
         run: |
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
             echo "Deploying all services..."
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.SERVICES }}"
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.SERVICES }}"
           fi
 
