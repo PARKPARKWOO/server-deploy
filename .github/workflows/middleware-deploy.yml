@@ -1,4 +1,4 @@
-name: Deploy Traefik via Docker Compose
+name: Deploy Middleware via Docker Compose
 
 on:
   workflow_dispatch:
@@ -11,6 +11,14 @@ on:
         options:
           - dev
           - prod
+      services:
+        description: "Select services to deploy (comma-separated if multiple)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - reverse-proxy
+          - kafka1
 
 jobs:
   deploy-traefik:
@@ -32,4 +40,12 @@ jobs:
 
       - name: Deploy Traefik with Docker Compose
         shell: bash
-        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d reverse-proxy
+        run: |
+          if [[ "${{ env.SERVICES }}" == "all" ]]; then
+            echo "Deploying all services..."
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d
+          else
+            echo "Deploying selected service: ${{ env.SERVICES }}"
+            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.SERVICES }}"
+          fi
+
