@@ -41,6 +41,7 @@ services:
         loki-external-labels: "job=traefik"
   kafka1:
     image: 'bitnami/kafka:latest'
+    container_name: kafka1
     environment:
       - KAFKA_CFG_NODE_ID=1 # 고유한 노드 ID 설정
       - KAFKA_CFG_PROCESS_ROLES=controller,broker

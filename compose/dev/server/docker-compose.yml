@@ -134,8 +134,19 @@ services:
     restart: on-failure
     networks:
       - internal-network
-
-
+  orchestrator:
+    image:
+    container_name: dev-orchestrator
+    networks:
+      - internal-network
+    environment:
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - RDBMS_URL=dev-bbr-mysql
+      - AUTH_RDBMS_URL=dev-bbr-mysql
+      - AUTH_RDBMS_USER=${RDBMS_USERNAME}
+      - AUTH_RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - KAFKA_HOST=kafka1:9092
 networks:
   barbellrobot-backend:
     driver: bridge
