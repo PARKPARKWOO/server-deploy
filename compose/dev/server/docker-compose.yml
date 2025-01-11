@@ -37,7 +37,7 @@ services:
       - EUREKA_URI=http://dev-eureka:8761/eureka
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:c833840c7d8415b31a4d0b7a64408029b8c07bcf'
+    image: 'wy9295/find-my-pet-backend:2fb433d15099aa6dd4d61210eb07a8ca029356a2'
     container_name: dev-fmp-backend
     #    labels:
     #      - "traefik.enable=true"
