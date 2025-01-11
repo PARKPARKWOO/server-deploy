@@ -139,6 +139,7 @@ services:
     container_name: dev-orchestrator
     networks:
       - internal-network
+      - barbellrobot-backend
     environment:
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
