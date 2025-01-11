@@ -21,7 +21,7 @@ on:
           - kafka1
 
 jobs:
-  deploy-traefik:
+  deploy-middleware:
     runs-on: [self-hosted, label-deploy]
     steps:
       - name: Checkout repository
@@ -31,6 +31,7 @@ jobs:
         shell: bash
         run: |
           echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "SERVICES=${{ inputs.services }}" >> $GITHUB_ENV
 
       - name: Docker Hub login
         uses: docker/login-action@v2
