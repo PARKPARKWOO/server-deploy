@@ -2,14 +2,14 @@ services:
   auth-server:
     image: 'wy9295/auth-server:4f4e77f22166813b992d57ba59105d05b2af5292'
     container_name: dev-auth
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
-      - "traefik.http.routers.auth-server-host.priority=100"
-      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
-      - "traefik.http.routers.auth-server-host.tls=true"
-      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
-      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
+#      - "traefik.http.routers.auth-server-host.priority=100"
+#      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
+#      - "traefik.http.routers.auth-server-host.tls=true"
+#      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
+#      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
 
 #      - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
 #      - "traefik.http.routers.auth-server-path.priority=90"
@@ -107,14 +107,14 @@ services:
   gateway:
     image: 'wy9295/gateway:3e5859a1dfe9edf62deb875419cc79c00bf8d8d2'
     container_name: dev-gateway
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
-#      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
-#      - "traefik.http.routers.gateway.entrypoints=websecure"
-#      - "traefik.http.routers.gateway.tls=true"
-#      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
-#      - "traefik.docker.network=gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+      - "traefik.http.routers.gateway.entrypoints=websecure"
+      - "traefik.http.routers.gateway.tls=true"
+      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+      - "traefik.docker.network=gateway"
     networks:
       - internal-network
       - gateway
