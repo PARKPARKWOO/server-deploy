@@ -1,6 +1,6 @@
 services:
   auth-server:
-    image: 'wy9295/auth-server:4f4e77f22166813b992d57ba59105d05b2af5292'
+    image: 'wy9295/auth-server:e5ce210bb899604471291a44e0798f7b491c5236'
     container_name: dev-auth
 #    labels:
 #      - "traefik.enable=true"
