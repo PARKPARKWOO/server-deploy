@@ -53,12 +53,15 @@ networks:
   barbellrobot-backend:
     driver: overlay
     name: barbellrobot-backend
+    attachable: true
   find-my-pet-backend:
     driver: overlay
     name: find-my-pet-backend
+    attachable: true
   internal-network:
     driver: overlay
     name: internal-network
+    attachable: true
 
 volumes:
   barbellrobot-mysql-data:
