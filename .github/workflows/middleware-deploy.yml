@@ -23,7 +23,7 @@ on:
 
 jobs:
   deploy-middleware:
-    runs-on: [self-hosted, label-deploy, label-deploy2]
+    runs-on: [self-hosted, label-deploy2]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

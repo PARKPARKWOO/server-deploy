@@ -24,7 +24,7 @@ on:
           - node_exporter
 jobs:
   deploy-loki-grafana:
-    runs-on: [self-hosted, label-deploy]
+    runs-on: [self-hosted, label-deploy2]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
