@@ -125,15 +125,20 @@ services:
 networks:
   barbellrobot-backend:
     driver: overlay
+    name: barbellrobot-backend
   find-my-pet-backend:
     driver: overlay
+    name: find-my-pet-backend
   internal-network:
     driver: overlay
+    name: internal-network
   auth-server:
     driver: overlay
     attachable: true
+    name: auth-server
   gateway:
     driver: overlay
+    name: gateway
 
 volumes:
   google-key:

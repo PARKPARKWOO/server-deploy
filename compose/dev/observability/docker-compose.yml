@@ -121,6 +121,7 @@ networks:
   internal-network:
     driver: overlay
     attachable: true
+    name: internal-network
 
 volumes:
   prometheus_data:

@@ -52,10 +52,13 @@ services:
 networks:
   barbellrobot-backend:
     driver: overlay
+    name: barbellrobot-backend
   find-my-pet-backend:
     driver: overlay
+    name: find-my-pet-backend
   internal-network:
     driver: overlay
+    name: internal-network
 
 volumes:
   barbellrobot-mysql-data:
