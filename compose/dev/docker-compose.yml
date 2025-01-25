@@ -13,6 +13,7 @@ services:
     command:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
+      - "--providers.docker.swarmMode=true"
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
