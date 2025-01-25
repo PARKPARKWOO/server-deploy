@@ -17,6 +17,7 @@ on:
         default: "all"
         type: choice
         options:
+          - all
           - redis
           - find-my-pet-mysql
           - barbell-robot-mysql
@@ -50,10 +51,10 @@ jobs:
 
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
             echo "Deploying all services to Swarm..."
-            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" db_stack
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" ${{ env.ENVIRONMENT }}
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" --with-registry-auth db_stack
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" ${{ env.ENVIRONMENT }}
           fi
 
           echo "Checking deployed services..."

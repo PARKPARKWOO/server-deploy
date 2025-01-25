@@ -17,6 +17,7 @@ on:
         default: "all"
         type: choice
         options:
+          - all
           - orchestrator
           - auth-server
           - find-my-pet-backend
@@ -80,10 +81,10 @@ jobs:
 
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
             echo "Deploying all services to Swarm..."
-            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml"
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" ${{ env.ENVIRONMENT }}
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" --with-registry-auth db_stack
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" ${{ env.ENVIRONMENT }}
           fi
 
           echo "Checking deployed services..."

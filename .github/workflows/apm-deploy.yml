@@ -11,7 +11,17 @@ on:
         options:
           - dev
           - prod
-
+      services:
+        description: "Select services to deploy (comma-separated if multiple)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - loki
+          - grafana
+          - prometheus
+          - node_exporter
 jobs:
   deploy-loki-grafana:
     runs-on: [self-hosted, label-deploy]
@@ -34,4 +44,17 @@ jobs:
         env:
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
         shell: bash
-        run: docker-compose -f "compose/${{ env.ENVIRONMENT }}/observability/docker-compose.yml" up -d loki grafana prometheus node_exporter
+        run: |
+          echo "Initializing Docker Swarm (if not already initialized)..."
+          docker swarm init || echo "Swarm already initialized"
+
+          if [[ "${{ env.SERVICES }}" == "all" ]]; then
+            echo "Deploying all services to Swarm..."
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/observability/docker-compose.yml" ${{ env.ENVIRONMENT }}
+          else
+            echo "Deploying selected service: ${{ env.SERVICES }}"
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/observability/docker-compose.yml" ${{ env.ENVIRONMENT }}
+          fi
+
+          echo "Checking deployed services..."
+          docker service ls

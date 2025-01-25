@@ -17,12 +17,13 @@ on:
         default: "all"
         type: choice
         options:
+          - all
           - reverse-proxy
           - kafka1
 
 jobs:
   deploy-middleware:
-    runs-on: [self-hosted, label-deploy]
+    runs-on: [self-hosted, label-deploy, label-deploy2]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,11 +43,17 @@ jobs:
       - name: Deploy with Docker Compose
         shell: bash
         run: |
+          echo "Initializing Docker Swarm (if not already initialized)..."
+          docker swarm init || echo "Swarm already initialized"
+
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
-            echo "Deploying all services..."
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d
+            echo "Deploying all services to Swarm..."
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" ${{ env.ENVIRONMENT }}
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" up -d "${{ env.SERVICES }}"
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/docker-compose.yml" ${{ env.ENVIRONMENT }}
           fi
+
+          echo "Checking deployed services..."
+          docker service ls
 

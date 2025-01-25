@@ -109,5 +109,14 @@ jobs:
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
         run: |
-          docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" pull "${{ env.APP_NAME }}"
-          docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.APP_NAME }}"
+          SERVICE_NAME=${{ env.APP_NAME }}
+          STACK_NAME=${{ env.ENVIRONMENT }}
+          COMPOSE_FILE="compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml"
+
+          echo "Deploying service: $SERVICE_NAME in stack: $STACK_NAME"
+
+          docker-compose -f "$COMPOSE_FILE" pull "$SERVICE_NAME"
+
+          docker service update --force --image $(docker-compose -f "$COMPOSE_FILE" config | \
+            grep "image: " | grep "$SERVICE_NAME" | awk '{print $2}') "$STACK_NAME"_"$SERVICE_NAME"
+
