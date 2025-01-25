@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redis:
     image: redis:latest
@@ -9,6 +11,12 @@ services:
       - internal-network
     ports:
       - "6379:6379"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == pve"
+
   barbell-robot-mysql:
     image: mysql:8.4
     container_name: dev-bbr-mysql
@@ -19,6 +27,12 @@ services:
       - barbellrobot-backend
     volumes:
       - barbellrobot-mysql-data:/var/lib/mysql
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == my"
+
   find-my-pet-mysql:
     image: mysql:8.4
     container_name: dev-fmp-mysql
@@ -29,17 +43,19 @@ services:
       - find-my-pet-backend
     volumes:
       - find-my-pet-mysql-data:/var/lib/mysql
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == my"
 
 networks:
   barbellrobot-backend:
-    driver: bridge
-    name: barbellrobot-backend
+    driver: overlay
   find-my-pet-backend:
-    driver: bridge
-    name: find-my-pet-backend
+    driver: overlay
   internal-network:
-    driver: bridge
-    name: internal-network
+    driver: overlay
 
 volumes:
   barbellrobot-mysql-data:

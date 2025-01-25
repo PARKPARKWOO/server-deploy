@@ -1,9 +1,17 @@
+version: "3.8"
+
 services:
   prometheus:
     image: prom/prometheus:latest
-    container_name: dev-prometheus
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
@@ -14,15 +22,29 @@ services:
       - "traefik.enable=false"
     networks:
       - internal-network
+
   loki:
     image: grafana/loki:2.9.0
-    container_name: loki
     command: -config.file=/etc/loki/local-config.yaml
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
     networks:
       - internal-network
+
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
@@ -62,21 +84,34 @@ services:
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
     networks:
       - internal-network
+
   pyroscope:
     image: grafana/pyroscope:latest
-    container_name: pyroscope
     ports:
       - "4040:4040"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
     networks:
       - internal-network
     environment:
       - PYROSCOPE_LOG_LEVEL=info
+
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
-    container_name: node-exporter
     command:
       - '--path.rootfs=/host'
-    restart: unless-stopped
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
     volumes:
       - '/:/host:ro,rslave'
     networks:
@@ -84,9 +119,9 @@ services:
 
 networks:
   internal-network:
-    driver: bridge
-    name: internal-network
-
+    driver: overlay
+    attachable: true
 
 volumes:
+  prometheus_data:
   grafana_data:

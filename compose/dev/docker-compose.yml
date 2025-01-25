@@ -1,13 +1,18 @@
+version: '3.8'
+
 services:
   reverse-proxy:
     image: traefik:v2.9
-    container_name: dev-traefik
-    # TODO: dashboard port change
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.hostname == my
     command:
-      #      - "--api.insecure=true"
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
-      #      - "--entrypoints.web.address=:80"
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
@@ -22,8 +27,6 @@ services:
     ports:
       - "8080:8080"
       - "443:443"
-    #      - "80:80"
-    #      - "8081:8081"
     networks:
       - internal-network
       - find-my-pet-backend
@@ -33,17 +36,23 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
-    #      - ./traefik.yml:/etc/traefik/traefik.yml:ro
     logging:
       driver: loki
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=traefik"
+
   kafka1:
     image: 'bitnami/kafka:latest'
-    container_name: kafka1
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.hostname == pve
     environment:
-      - KAFKA_CFG_NODE_ID=1 # 고유한 노드 ID 설정
+      - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka1:9092
@@ -51,7 +60,7 @@ services:
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
-      - CLUSTER_ID="YyV8UqkzTOG4JfG0xVHoWw" # Kafka Cluster ID
+      - CLUSTER_ID="YyV8UqkzTOG4JfG0xVHoWw"
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -62,23 +71,23 @@ services:
 
 networks:
   barbellrobot-backend:
-    driver: bridge
-    name: barbellrobot-backend
+    driver: overlay
+    attachable: true
   find-my-pet-backend:
-    driver: bridge
-    name: find-my-pet-backend
+    driver: overlay
+    attachable: true
   internal-network:
-    driver: bridge
-    name: internal-network
+    driver: overlay
+    attachable: true
   external-network:
-    driver: bridge
-    name: external-network
+    driver: overlay
+    attachable: true
   auth-server:
-    driver: bridge
-    name: auth-server
+    driver: overlay
+    attachable: true
   gateway:
-    driver: bridge
-    name: gateway
+    driver: overlay
+    attachable: true
 
 volumes:
   kafka1:

@@ -38,17 +38,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Deploy MySQL and Redis with Docker Compose
+      - name: Deploy MySQL and Redis with Docker Swarm
         shell: bash
         env:
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
           RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
+          echo "Initializing Docker Swarm (if not already initialized)..."
+          docker swarm init || echo "Swarm already initialized"
+
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
-            echo "Deploying all services..."
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" up -d
+            echo "Deploying all services to Swarm..."
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" db_stack
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" up -d "${{ env.SERVICES }}"
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/database/docker-compose.yml" --with-registry-auth db_stack
           fi
+
+          echo "Checking deployed services..."
+          docker service ls

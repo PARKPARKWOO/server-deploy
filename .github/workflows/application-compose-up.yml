@@ -66,11 +66,25 @@ jobs:
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
+#        run: |
+#          if [[ "${{ env.SERVICES }}" == "all" ]]; then
+#            echo "Deploying all services..."
+#            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d
+#          else
+#            echo "Deploying selected service: ${{ env.SERVICES }}"
+#            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.SERVICES }}"
+#          fi
         run: |
+          echo "Initializing Docker Swarm (if not already initialized)..."
+          docker swarm init || echo "Swarm already initialized"
+
           if [[ "${{ env.SERVICES }}" == "all" ]]; then
-            echo "Deploying all services..."
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d
+            echo "Deploying all services to Swarm..."
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml"
           else
             echo "Deploying selected service: ${{ env.SERVICES }}"
-            docker-compose -f "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" up -d "${{ env.SERVICES }}"
+            docker stack deploy -c "compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml" --with-registry-auth db_stack
           fi
+
+          echo "Checking deployed services..."
+          docker service ls

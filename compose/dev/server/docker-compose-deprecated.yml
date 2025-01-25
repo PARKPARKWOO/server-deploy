@@ -1,0 +1,170 @@
+services:
+  auth-server:
+    image: 'wy9295/auth-server:69285ae12c11ad0e7ee4aeb713338b3d072e4c78'
+    container_name: dev-auth
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.auth-server-host.rule=Host(`woo-auth.duckdns.org`)"
+#      - "traefik.http.routers.auth-server-host.priority=100"
+#      - "traefik.http.routers.auth-server-host.entrypoints=websecure"
+#      - "traefik.http.routers.auth-server-host.tls=true"
+#      - "traefik.http.routers.auth-server-host.tls.certresolver=myresolver"
+#      - "traefik.http.services.auth-server-host.loadbalancer.server.port=8080"
+
+#      - "traefik.http.routers.auth-server-path.rule=PathPrefix(`/api/v1/auth`)"
+#      - "traefik.http.routers.auth-server-path.priority=90"
+#      - "traefik.http.routers.auth-server-path.entrypoints=websecure"
+#      - "traefik.http.routers.auth-server-path.tls=true"
+#      - "traefik.http.routers.auth-server-path.tls.certresolver=myresolver"
+#      - "traefik.http.services.auth-server-path.loadbalancer.server.port=8080"
+#      - "traefik.docker.network=internal-network"
+    restart: on-failure
+    networks:
+      - internal-network
+      - auth-server
+      - barbellrobot-backend
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URL=dev-bbr-mysql
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
+      - EUREKA_URI=http://dev-eureka:8761/eureka
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+  find-my-pet-backend:
+    image: 'wy9295/find-my-pet-backend:a83efa83269ea4fa420751e3ee6c37075d6dd387'
+    container_name: dev-fmp-backend
+    #    labels:
+    #      - "traefik.enable=true"
+    #      - "traefik.http.routers.find-my-pet-backend.rule=Host(`find-my-pet.duckdns.org`)"
+    #      - "traefik.http.services.find-my-pet-backend.loadbalancer.server.port=8080"
+    #      - "traefik.http.routers.find-my-pet-backend.entrypoints=websecure"
+    #      - "traefik.http.routers.find-my-pet-backend.tls=true"
+    #      - "traefik.http.routers.find-my-pet-backend.tls.certresolver=myresolver"
+    #      - "traefik.docker.network=find-my-pet-backend"
+    networks:
+      - internal-network
+      - find-my-pet-backend
+    restart: on-failure
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URI=dev-fmp-mysql
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
+      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
+      - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
+      - AUTH_HOST=auth
+      - KAFKA_HOST=kafka1:9092
+      - EUREKA_URI=http://dev-eureka:8761/eureka
+  barbellrobot-backend:
+    image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
+    container_name: dev-bbr-backend
+    #    labels:
+    #      - "traefik.enable=true"
+    #      - "traefik.http.routers.barbellrobot-backend.rule=Host(`wooyoung.duckdns.org`)"
+    #      - "traefik.http.services.barbellrobot-backend.loadbalancer.server.port=8080"
+    #      - "traefik.http.routers.barbellrobot-backend.entrypoints=websecure"
+    #      - "traefik.http.routers.barbellrobot-backend.tls=true"
+    #      - "traefik.http.routers.barbellrobot-backend.tls.certresolver=myresolver"
+    #      - "traefik.docker.network=barbellrobot-backend"
+    networks:
+      - internal-network
+      - barbellrobot-backend
+    restart: on-failure
+    volumes:
+      - /root/google/key.json:/root/.config/gcloud/key.json:ro
+    command: [ "sh", "-c", "gcloud auth activate-service-account --key-file=/root/.config/gcloud/key.json && java -jar app.jar" ]
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URI=dev-bbr-mysql
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - GMAIL_USERNAME=${GMAIL_USERNAME}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+      - GEMINI_PROJECT_ID=${GEMINI_PROJECT_ID}
+      - GEMINI_LOCATION=${GEMINI_LOCATION}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
+      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
+      - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
+      - EUREKA_URI=http://dev-eureka:8761/eureka
+  #  discovery
+  gateway:
+    image: 'wy9295/gateway:5beed37fe0637b3a77813ec298a662cb46574409'
+    container_name: dev-gateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`wooyoung.duckdns.org`)"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+      - "traefik.http.routers.gateway.entrypoints=websecure"
+      - "traefik.http.routers.gateway.tls=true"
+      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+      - "traefik.docker.network=gateway"
+    networks:
+      - internal-network
+      - gateway
+    restart: on-failure
+    environment:
+      - BBR_HOST=dev-bbr-backend
+      - FMP_HOST=dev-fmp-backend
+      - AUTH_HOST=dev-auth
+      - EUREKA_URI=http://dev-eureka:8761/eureka
+  eureka:
+    image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
+    container_name: dev-eureka
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.eureka.rule=Host(`wooyoung.duckdns.org`)"
+      - "traefik.http.routers.eureka.entrypoints=eureka"
+      - "traefik.http.services.eureka.loadbalancer.server.port=8761"
+    restart: on-failure
+    networks:
+      - internal-network
+  orchestrator:
+    image: 'wy9295/orchestrator:22cd8fa8cb52ac7b469e04143fbe40f17ddc0ae9'
+    container_name: dev-orchestrator
+    networks:
+      - internal-network
+      - barbellrobot-backend
+    environment:
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - RDBMS_URL=dev-bbr-mysql
+      - AUTH_RDBMS_URL=dev-bbr-mysql
+      - AUTH_RDBMS_USER=${RDBMS_USERNAME}
+      - AUTH_RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - KAFKA_HOST=kafka1:9092
+networks:
+  barbellrobot-backend:
+    driver: bridge
+    name: barbellrobot-backend
+  find-my-pet-backend:
+    driver: bridge
+    name: find-my-pet-backend
+  internal-network:
+    driver: bridge
+    name: internal-network
+  external-network:
+    driver: bridge
+    name: external-network
+  auth-server:
+    driver: bridge
+    name: auth-server
+  gateway:
+    driver: bridge
+    name: gateway
