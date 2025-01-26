@@ -9,14 +9,12 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - "node.hostname == my"
+          - "node.role == manager"
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
-    labels:
-      - "traefik.enable=false"
     networks:
       - internal-network
     volumes:
