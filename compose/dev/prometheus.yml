@@ -38,4 +38,4 @@ scrape_configs:
   - job_name: 'infra'
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: ['node_exporter:9100']
