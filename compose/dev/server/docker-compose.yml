@@ -7,9 +7,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      update_config:
-        parallelism: 2
-        delay: 10s
+      placement:
+        constraints:
+          - "node.hostname == pve"
     networks:
       - internal-network
       - auth-server
@@ -44,7 +44,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=dev-fmp-mysql
+      - RDBMS_URI=find-my-pet-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
@@ -75,7 +75,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=dev-bbr-mysql
+      - RDBMS_URI=barbell-robot-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
