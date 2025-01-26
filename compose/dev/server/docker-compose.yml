@@ -123,9 +123,12 @@ services:
       - internal-network
       - gateway
     environment:
-      - BBR_HOST=dev-bbr-backend
-      - FMP_HOST=dev-fmp-backend
-      - AUTH_HOST=dev-auth
+      - BBR_NAME=dev-bbr-backend
+      - FMP_NAME=dev-fmp-backend
+      - AUTH_NAME=dev-auth
+      - BBR_HOST=barbellrobot-backend
+      - FMP_HOST=find-my-pet-backend
+      - AUTH_HOST=auth-server
       - EUREKA_URI=http://eureka:8761/eureka
 
   eureka:
