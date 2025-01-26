@@ -97,6 +97,14 @@ services:
       placement:
         constraints:
           - "node.hostname == pve"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`)"
+        - "traefik.http.services.gateway.loadbalancer.server.port=8080"
+        - "traefik.http.routers.gateway.entrypoints=websecure"
+        - "traefik.http.routers.gateway.tls=true"
+        - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+        - "traefik.docker.network=gateway"
     networks:
       - internal-network
       - gateway
