@@ -10,9 +10,8 @@ services:
       placement:
         constraints:
           - "node.hostname == my"
-    volumes:
-      - type: bind
-        source: ./prometheus.yml
+    configs:
+      - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
