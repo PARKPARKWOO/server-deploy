@@ -18,14 +18,14 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URL=dev-bbr-mysql
+      - RDBMS_URL=barbell-robot-mysql
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
       - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
-      - EUREKA_URI=http://dev-eureka:8761/eureka
+      - EUREKA_URI=http://eureka:8761/eureka
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
 
   find-my-pet-backend:
@@ -53,7 +53,7 @@ services:
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
       - AUTH_HOST=auth
       - KAFKA_HOST=kafka1:9092
-      - EUREKA_URI=http://dev-eureka:8761/eureka
+      - EUREKA_URI=http://eureka:8761/eureka
 
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
@@ -86,7 +86,7 @@ services:
       - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
-      - EUREKA_URI=http://dev-eureka:8761/eureka
+      - EUREKA_URI=http://eureka:8761/eureka
 
   gateway:
     image: 'wy9295/gateway:5beed37fe0637b3a77813ec298a662cb46574409'
@@ -104,7 +104,7 @@ services:
       - BBR_HOST=dev-bbr-backend
       - FMP_HOST=dev-fmp-backend
       - AUTH_HOST=dev-auth
-      - EUREKA_URI=http://dev-eureka:8761/eureka
+      - EUREKA_URI=http://eureka:8761/eureka
 
   eureka:
     image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
