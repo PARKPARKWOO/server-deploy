@@ -15,10 +15,6 @@ services:
         target: /etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
-    depends_on:
-      - reverse-proxy
-      - find-my-pet-backend
-      - barbellrobot-backend
     labels:
       - "traefik.enable=false"
     networks:
