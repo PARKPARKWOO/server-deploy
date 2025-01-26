@@ -36,7 +36,7 @@ services:
       - gateway
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./letsencrypt:/letsencrypt
+      - letsencrypt:/letsencrypt
     logging:
       driver: loki
       options:
@@ -92,3 +92,5 @@ networks:
 
 volumes:
   kafka1:
+  letsencrypt:
+    driver: local
