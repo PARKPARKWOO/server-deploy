@@ -9,7 +9,19 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.hostname == my
+          - node.hostname == pve
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.my.rule=Host(`wooyoung.duckdns.org`)"
+        - "traefik.http.routers.my.entrypoints=websecure"
+        - "traefik.http.routers.my.tls.certresolver=myresolver"
+        - "traefik.http.services.my.loadbalancer.server.url=https://172.30.1.32:8006"
+        - "traefik.http.services.my.loadbalancer.passhostheader=true"
+        - "traefik.http.routers.pve.rule=Host(`pve-woo.duckdns.org`)"
+        - "traefik.http.routers.pve.entrypoints=websecure"
+        - "traefik.http.routers.pve.tls.certresolver=myresolver"
+        - "traefik.http.services.pve.loadbalancer.server.url=https://localhost:8006"
+        - "traefik.http.services.pve.loadbalancer.passhostheader=true"
     command:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
@@ -30,9 +42,6 @@ services:
       - "443:443"
     networks:
       - internal-network
-      - find-my-pet-backend
-      - barbellrobot-backend
-      - auth-server
       - gateway
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -71,26 +80,10 @@ services:
       - internal-network
 
 networks:
-  barbellrobot-backend:
-    driver: overlay
-    attachable: true
-    name: barbellrobot-backend
-  find-my-pet-backend:
-    driver: overlay
-    attachable: true
-    name: find-my-pet-backend
   internal-network:
     driver: overlay
     attachable: true
     name: internal-network
-  external-network:
-    driver: overlay
-    attachable: true
-    name: external-network
-  auth-server:
-    driver: overlay
-    attachable: true
-    name: auth-server
   gateway:
     driver: overlay
     attachable: true
