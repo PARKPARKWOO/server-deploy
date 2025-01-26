@@ -10,6 +10,11 @@ services:
       placement:
         constraints:
           - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
     networks:
       - internal-network
       - auth-server
@@ -37,6 +42,11 @@ services:
       placement:
         constraints:
           - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
     networks:
       - internal-network
       - find-my-pet-backend
@@ -98,6 +108,10 @@ services:
         constraints:
           - "node.hostname == pve"
       labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
         - "traefik.enable=true"
         - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
@@ -135,6 +149,11 @@ services:
       placement:
         constraints:
           - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
     networks:
       - internal-network
       - barbellrobot-backend
