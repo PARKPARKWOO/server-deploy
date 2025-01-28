@@ -12,15 +12,28 @@ services:
           - node.hostname == pve
       labels:
         - "traefik.enable=true"
+
+        # Router for wooyoung.duckdns.org
         - "traefik.http.routers.my.rule=Host(`wooyoung.duckdns.org`)"
         - "traefik.http.routers.my.entrypoints=websecure"
         - "traefik.http.routers.my.tls.certresolver=myresolver"
         - "traefik.http.services.my.loadbalancer.server.url=https://172.30.1.32:8006"
         - "traefik.http.services.my.loadbalancer.passhostheader=true"
+
+        # Apply middleware to router 'my' and 'pve'
+        - "traefik.http.routers.my.middlewares=redirect-my"
+        - "traefik.http.routers.pve.middlewares=redirect-pve"
+
+        - "traefik.http.middlewares.redirect-my.redirectregex.regex=^https://wooyoung.duckdns.org/(.*)"
+        - "traefik.http.middlewares.redirect-my.redirectregex.replacement=https://172.30.1.32:8006/$${1}"
+
+        - "traefik.http.middlewares.redirect-pve.redirectregex.regex=^https://pve-woo.duckdns.org/(.*)"
+        - "traefik.http.middlewares.redirect-pve.redirectregex.replacement=http://172.30.1.42:8006/$${1}"
+        # Router for pve-woo.duckdns.org
         - "traefik.http.routers.pve.rule=Host(`pve-woo.duckdns.org`)"
         - "traefik.http.routers.pve.entrypoints=websecure"
         - "traefik.http.routers.pve.tls.certresolver=myresolver"
-        - "traefik.http.services.pve.loadbalancer.server.url=https://localhost:8006"
+        - "traefik.http.services.pve.loadbalancer.server.url=https://172.30.1.42:8006"
         - "traefik.http.services.pve.loadbalancer.passhostheader=true"
     command:
       - "--entrypoints.metrics.address=:8080"
