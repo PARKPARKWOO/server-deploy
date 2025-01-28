@@ -108,15 +108,20 @@ jobs:
           FMP_GOOGLE_CLIENT_ID: ${{ secrets.FMP_GOOGLE_CLIENT_ID }}
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
+      - name: Deploy with Rolling Update
+        env:
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          # 생략된 환경 변수들...
         run: |
           SERVICE_NAME=${{ env.APP_NAME }}
           STACK_NAME=${{ env.ENVIRONMENT }}
           COMPOSE_FILE="compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml"
 
-          echo "Deploying service: $SERVICE_NAME in stack: $STACK_NAME"
+          echo "Rolling update for service: $SERVICE_NAME in stack: $STACK_NAME"
 
           docker-compose -f "$COMPOSE_FILE" pull "$SERVICE_NAME"
 
-          docker service update --force --image $(docker-compose -f "$COMPOSE_FILE" config | \
-            grep "image: " | grep "$SERVICE_NAME" | awk '{print $2}') "$STACK_NAME"_"$SERVICE_NAME"
+          NEW_IMAGE=$(docker-compose -f "$COMPOSE_FILE" config | grep "image: " | grep "$SERVICE_NAME" | awk '{print $2}')
+          docker service update --image "$NEW_IMAGE" --update-parallelism 2 --update-delay 10s "$STACK_NAME"_"$SERVICE_NAME"
 
