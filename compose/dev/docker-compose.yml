@@ -25,10 +25,10 @@ services:
         - "traefik.http.routers.pve.middlewares=redirect-pve"
 
         - "traefik.http.middlewares.redirect-my.redirectregex.regex=^https://wooyoung.duckdns.org/(.*)"
-        - "traefik.http.middlewares.redirect-my.redirectregex.replacement=https://172.30.1.32:8006/$${1}"
+        - "traefik.http.middlewares.redirect-my.redirectregex.replacement=https://172.30.1.32:8006"
 
         - "traefik.http.middlewares.redirect-pve.redirectregex.regex=^https://pve-woo.duckdns.org/(.*)"
-        - "traefik.http.middlewares.redirect-pve.redirectregex.replacement=http://172.30.1.42:8006/$${1}"
+        - "traefik.http.middlewares.redirect-pve.redirectregex.replacement=https://172.30.1.42:8006"
         # Router for pve-woo.duckdns.org
         - "traefik.http.routers.pve.rule=Host(`pve-woo.duckdns.org`)"
         - "traefik.http.routers.pve.entrypoints=websecure"
