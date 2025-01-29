@@ -50,6 +50,7 @@ services:
     networks:
       - internal-network
       - gateway
+      - node
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
@@ -87,6 +88,9 @@ services:
       - internal-network
 
 networks:
+  node:
+    driver: host
+    name: node
   internal-network:
     driver: overlay
     attachable: true
