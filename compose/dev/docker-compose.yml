@@ -14,23 +14,20 @@ services:
         - "traefik.enable=true"
 
         # Router for wooyoung.duckdns.org
-        - "traefik.http.routers.my.rule=Host(`wooyoung.duckdns.org`)"
-        - "traefik.http.routers.my.entrypoints=websecure"
-        - "traefik.http.routers.my.tls.certresolver=myresolver"
-        - "traefik.http.services.my.loadbalancer.server.url=https://172.30.1.32:8006"
-        - "traefik.http.services.my.loadbalancer.passhostheader=true"
-
-        - "traefik.http.services.my.loadbalancer.server.scheme=https"
-        - "traefik.http.services.my.loadbalancer.server.insecureSkipVerify=true"
-        - "traefik.http.services.pve.loadbalancer.server.scheme=https"
-        - "traefik.http.services.pve.loadbalancer.server.insecureSkipVerify=true"
+        - "traefik.http.routers.wooyoung.rule=Host(`wooyoung.duckdns.org`)"
+        - "traefik.http.routers.wooyoung.entrypoints=websecure"
+        - "traefik.http.routers.wooyoung.tls.certresolver=myresolver"
+        - "traefik.http.services.wooyoung.loadbalancer.server.url=https://172.30.1.32:8006"
+        - "traefik.http.services.wooyoung.loadbalancer.server.port=8006"
+        - "traefik.http.services.wooyoung.loadbalancer.passhostheader=true"
 
         # Router for pve-woo.duckdns.org
-        - "traefik.http.routers.pve.rule=Host(`pve-woo.duckdns.org`)"
-        - "traefik.http.routers.pve.entrypoints=websecure"
-        - "traefik.http.routers.pve.tls.certresolver=myresolver"
-        - "traefik.http.services.pve.loadbalancer.server.url=https://172.30.1.42:8006"
-        - "traefik.http.services.pve.loadbalancer.passhostheader=true"
+        - "traefik.http.routers.pve-woo.rule=Host(`pve-woo.duckdns.org`)"
+        - "traefik.http.routers.pve-woo.entrypoints=websecure"
+        - "traefik.http.routers.pve-woo.tls.certresolver=myresolver"
+        - "traefik.http.services.pve-woo.loadbalancer.server.url=https://172.30.1.42:8006"
+        - "traefik.http.services.pve-woo.loadbalancer.server.port=8006"
+        - "traefik.http.services.pve-woo.loadbalancer.passhostheader=true"
     command:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
