@@ -3,6 +3,8 @@ version: '3.8'
 services:
   reverse-proxy:
     image: traefik:v2.9
+    extra_hosts:
+      - "host.docker.internal:172.30.0.1"
     deploy:
       replicas: 1
       restart_policy:
@@ -50,7 +52,6 @@ services:
     networks:
       - internal-network
       - gateway
-      - node
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
@@ -88,9 +89,6 @@ services:
       - internal-network
 
 networks:
-  node:
-    driver: host
-    name: node
   internal-network:
     driver: overlay
     attachable: true
