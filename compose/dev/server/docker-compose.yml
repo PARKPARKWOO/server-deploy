@@ -34,7 +34,7 @@ services:
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
 
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:4bd54a4ad753352f58009bf2b75dc8a8bf5d6217'
+    image: 'wy9295/find-my-pet-backend:85012e01fbcf48d6648ac7a216720714e99388fb'
     deploy:
       replicas: 1
       restart_policy:
