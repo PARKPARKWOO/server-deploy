@@ -48,6 +48,21 @@ services:
       placement:
         constraints:
           - "node.hostname == my"
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == my"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - find-my-pet-backend
 
 networks:
   barbellrobot-backend:
@@ -66,3 +81,4 @@ networks:
 volumes:
   barbellrobot-mysql-data:
   find-my-pet-mysql-data:
+  mongo-data:

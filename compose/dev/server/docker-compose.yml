@@ -64,6 +64,9 @@ services:
       - AUTH_HOST=auth
       - KAFKA_HOST=kafka1:9092
       - EUREKA_URI=http://eureka:8761/eureka
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_HOST=mongodb
 
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'

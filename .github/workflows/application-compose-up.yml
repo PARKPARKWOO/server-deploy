@@ -67,6 +67,8 @@ jobs:
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
+          MONGODB_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
 #        run: |
 #          if [[ "${{ env.SERVICES }}" == "all" ]]; then
 #            echo "Deploying all services..."

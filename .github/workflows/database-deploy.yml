@@ -21,6 +21,7 @@ on:
           - redis
           - find-my-pet-mysql
           - barbell-robot-mysql
+          - mongodb
 jobs:
   deploy-databases:
     runs-on: [self-hosted, label-deploy2]
@@ -45,6 +46,8 @@ jobs:
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
           RDBMS_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          MONGO_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
         run: |
           echo "Initializing Docker Swarm (if not already initialized)..."
           docker swarm init || echo "Swarm already initialized"
