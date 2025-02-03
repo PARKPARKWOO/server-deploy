@@ -83,7 +83,7 @@ services:
         apiVersion: 1
         datasources:
         - name: Pyroscope
-          type: pyroscope
+          type: grafana-pyroscope-datasource
           access: proxy
           orgId: 1
           url: http://pyroscope:4040/
