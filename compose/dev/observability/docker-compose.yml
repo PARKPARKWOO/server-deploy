@@ -85,7 +85,7 @@ services:
         - name: Pyroscope
           type: grafana-pyroscope-datasource
           access: proxy
-          orgId: 1
+          orgId: 2
           url: http://pyroscope:4040/
           basicAuth: false
           isDefault: false
