@@ -17,14 +17,15 @@ services:
         constraints:
           - "node.hostname == pve"
 
-  barbell-robot-mysql:
+  mysql-master:
     image: mysql:8.4
-    container_name: dev-bbr-mysql
+    container_name: mysql-master
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
     restart: always
     networks:
       - barbellrobot-backend
+      - find-my-pet-backend
     volumes:
       - barbellrobot-mysql-data:/var/lib/mysql
     deploy:
@@ -33,21 +34,6 @@ services:
         constraints:
           - "node.hostname == my"
 
-  find-my-pet-mysql:
-    image: mysql:8.4
-    container_name: dev-fmp-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
-    restart: always
-    networks:
-      - find-my-pet-backend
-    volumes:
-      - find-my-pet-mysql-data:/var/lib/mysql
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - "node.hostname == my"
   mongodb:
     image: mongo:latest
     container_name: mongodb

@@ -23,7 +23,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URL=barbell-robot-mysql
+      - RDBMS_URL=mysql-master
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
@@ -54,7 +54,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=find-my-pet-mysql
+      - RDBMS_URI=mysql-master
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
@@ -88,7 +88,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - RDBMS_URI=barbell-robot-mysql
+      - RDBMS_URI=mysql-master
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
