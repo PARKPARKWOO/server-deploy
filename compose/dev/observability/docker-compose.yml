@@ -79,7 +79,20 @@ services:
           version: 1
           editable: false
         EOF
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds-pyroscope.yaml
+        apiVersion: 1
+        datasources:
+        - name: Pyroscope
+          type: pyroscope
+          access: proxy
+          orgId: 1
+          url: http://pyroscope:4040/
+          basicAuth: false
+          isDefault: false
+          editable: true
+        EOF
         /run.sh
+
     networks:
       - internal-network
 
