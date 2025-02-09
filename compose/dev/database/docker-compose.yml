@@ -26,6 +26,7 @@ services:
     networks:
       - barbellrobot-backend
       - find-my-pet-backend
+      - internal-network
     volumes:
       - barbellrobot-mysql-data:/var/lib/mysql
     deploy:
