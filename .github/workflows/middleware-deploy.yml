@@ -43,7 +43,7 @@ jobs:
       - name: Create nginx config
         run: |
           docker config rm nginx_config || true
-          docker config create nginx_config compose/${{ env.ENVIRONMENT }}/default.template
+          docker config create ${{ env.ENVIRONMENT }}nginx_config compose/${{ env.ENVIRONMENT }}/default.template
 
       - name: Deploy with Docker Compose
         shell: bash
