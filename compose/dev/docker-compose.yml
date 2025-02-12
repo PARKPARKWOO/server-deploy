@@ -38,7 +38,7 @@ services:
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.address=:443"
+      - "--entrypoints.web.address=:80"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
