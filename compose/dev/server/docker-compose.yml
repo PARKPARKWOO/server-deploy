@@ -202,6 +202,8 @@ services:
       - WP_DEBUG=true
       - WP_DEBUG_LOG=true
       - WP_DEBUG_DISPLAY=true
+    volumes:
+      - wordpress_data:/var/www/html
     networks:
       - internal-network
       - gateway
