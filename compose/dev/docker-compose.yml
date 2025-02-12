@@ -38,7 +38,6 @@ services:
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.address=:80"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
@@ -48,7 +47,6 @@ services:
       - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
       - "--metrics.prometheus.entryPoint=metrics"
     ports:
-      - "80:80"
       - "8080:8080"
       - "443:443"
     networks:
