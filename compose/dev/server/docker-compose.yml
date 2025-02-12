@@ -231,3 +231,4 @@ networks:
 
 volumes:
   google-key:
+  wordpress_data:
