@@ -182,7 +182,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.hostname == pve
+          - node.hostname == my
     environment:
       # WordPress 멀티사이트 설치를 위한 환경 변수 (예시)
       - WORDPRESS_DB_HOST=mysql-master
