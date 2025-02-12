@@ -40,6 +40,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Create nginx config
+        run: |
+          docker config rm nginx_config || true
+          docker config create nginx_config ./default.template
+
       - name: Deploy with Docker Compose
         shell: bash
         run: |
