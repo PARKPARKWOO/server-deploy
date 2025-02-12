@@ -14,23 +14,6 @@ services:
           - node.hostname == pve
       labels:
         - "traefik.enable=true"
-        # Router for wooyoung.duckdns.org
-        - "traefik.http.routers.wooyoung.rule=Host(`wooyoung.duckdns.org`)"
-        - "traefik.http.routers.wooyoung.entrypoints=websecure"
-        - "traefik.http.routers.wooyoung.tls.certresolver=myresolver"
-        - "traefik.http.routers.wooyoung.service=wooyoung-service"  # 서비스 이름 명시
-        - "traefik.http.services.wooyoung-service.loadbalancer.server.url=https://172.30.1.32:8006"
-        - "traefik.http.services.wooyoung-service.loadbalancer.server.port=8006"
-        - "traefik.http.services.wooyoung-service.loadbalancer.passhostheader=true"
-
-        # Router for pve-woo.duckdns.org
-        - "traefik.http.routers.pve-woo.rule=Host(`pve-woo.duckdns.org`)"
-        - "traefik.http.routers.pve-woo.entrypoints=websecure"
-        - "traefik.http.routers.pve-woo.tls.certresolver=myresolver"
-        - "traefik.http.routers.pve-woo.service=pve-woo-service"  # 서비스 이름 명시
-        - "traefik.http.services.pve-woo-service.loadbalancer.server.url=https://172.30.1.42:8006"
-        - "traefik.http.services.pve-woo-service.loadbalancer.server.port=8006"
-        - "traefik.http.services.pve-woo-service.loadbalancer.passhostheader=true"
     command:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
