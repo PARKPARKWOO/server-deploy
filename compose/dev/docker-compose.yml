@@ -84,7 +84,6 @@ services:
       - LOCAL_DIR=src
     volumes:
       - ./:/var/www
-
     networks:
       - internal-network
   kafka1:
