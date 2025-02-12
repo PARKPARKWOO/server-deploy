@@ -38,6 +38,7 @@ services:
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
@@ -47,6 +48,7 @@ services:
       - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
       - "--metrics.prometheus.entryPoint=metrics"
     ports:
+      - "80:80"
       - "8080:8080"
       - "443:443"
     networks:
@@ -60,33 +62,33 @@ services:
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=traefik"
-  nginx:
-    image: nginx:alpine
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints:
-          - node.hostname == my
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.mirror-view.rule=Host(`mirror-view.duckdns.org`)"
-        - "traefik.http.routers.mirror-view.entrypoints=websecure"
-        - "traefik.http.routers.mirror-view.tls=true"
-        - "traefik.http.routers.mirror-view.tls.certresolver=myresolver"
-        - "traefik.http.services.mirror-view.loadbalancer.server.port=80"
-        - "traefik.docker.network=internal-network"
-    configs:
-      - source: nginx_config
-        target: /etc/nginx/conf.d/default.template
-    command: /bin/sh -c "envsubst '$$LOCAL_DIR' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
-    environment:
-      - LOCAL_DIR=src
-    volumes:
-      - ./:/var/www
-    networks:
-      - internal-network
+#  nginx:
+#    image: nginx:alpine
+#    deploy:
+#      replicas: 1
+#      restart_policy:
+#        condition: on-failure
+#      placement:
+#        constraints:
+#          - node.hostname == my
+#      labels:
+#        - "traefik.enable=true"
+#        - "traefik.http.routers.mirror-view.rule=Host(`mirror-view.duckdns.org`)"
+#        - "traefik.http.routers.mirror-view.entrypoints=websecure"
+#        - "traefik.http.routers.mirror-view.tls=true"
+#        - "traefik.http.routers.mirror-view.tls.certresolver=myresolver"
+#        - "traefik.http.services.mirror-view.loadbalancer.server.port=80"
+#        - "traefik.docker.network=internal-network"
+#    configs:
+#      - source: nginx_config
+#        target: /etc/nginx/conf.d/default.template
+#    command: /bin/sh -c "envsubst '$$LOCAL_DIR' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+#    environment:
+#      - LOCAL_DIR=src
+#    volumes:
+#      - ./:/var/www
+#    networks:
+#      - internal-network
   kafka1:
     image: 'bitnami/kafka:latest'
     deploy:
