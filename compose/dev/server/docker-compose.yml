@@ -180,13 +180,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.mirror-view.rule=Host(`mirror-view.duckdns.org`)"
-        - "traefik.http.routers.mirror-view.entrypoints=websecure"
-        - "traefik.http.routers.mirror-view.tls=true"
-        - "traefik.http.routers.mirror-view.tls.certresolver=myresolver"
-        - "traefik.http.services.mirror-view.loadbalancer.server.port=80"
     environment:
       # WordPress 멀티사이트 설치를 위한 환경 변수 (예시)
       - WORDPRESS_DB_HOST=mysql-master
