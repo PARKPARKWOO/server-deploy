@@ -175,7 +175,7 @@ services:
       - KAFKA_HOST=kafka1:9092
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
   wordpress:
-    image: wordpress:6.2-php8.1-fpm-alpine
+    image: wordpress:6.7.1-fpm-alpine
     deploy:
       replicas: 1
       restart_policy:
