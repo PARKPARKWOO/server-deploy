@@ -222,27 +222,27 @@ services:
           - node.hostname == my
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.admin.rule=Host(`tech-hub-central.duckdns.org`)"
+        - "traefik.http.routers.admin.rule=HostRegexp(`{subdomain:[a-z]+}.tech-hub-central.duckdns.org`)"
         - "traefik.http.routers.admin.entrypoints=websecure"
         - "traefik.http.routers.admin.tls=true"
         - "traefik.http.routers.admin.tls.certresolver=myresolver"
         - "traefik.http.services.admin.loadbalancer.server.port=80"
         - "traefik.docker.network=internal-network"
     environment:
+      WORDPRESS_DB_HOST: mysql-master
+      WORDPRESS_DB_USER: ${RDBMS_USERNAME}
+      WORDPRESS_DB_PASSWORD: ${RDBMS_PASSWORD}
+      WORDPRESS_DB_NAME: admin
+      WORDPRESS_CONFIG_EXTRA: |
+        /* Multisite */
+        define('WP_ALLOW_MULTISITE', true );
+        define('MULTISITE', true);
+        define('SUBDOMAIN_INSTALL', true);
+        define('DOMAIN_CURRENT_SITE', 'tech-hub-central.duckdns.org'); 
+        define('PATH_CURRENT_SITE', '/');
+        define('SITE_ID_CURRENT_SITE', 1);
+        define('BLOG_ID_CURRENT_SITE', 1);
       # WordPress 멀티사이트 설치를 위한 환경 변수 (예시)
-      - WORDPRESS_DB_HOST=mysql-master
-      - WORDPRESS_DB_USER=${RDBMS_USERNAME}
-      - WORDPRESS_DB_PASSWORD=${RDBMS_PASSWORD}
-      - WORDPRESS_DB_NAME=admin
-      - WP_ALLOW_MULTISITE=true
-      - MULTISITE=true
-      - SUBDOMAIN_INSTALL=false
-      - PATH_CURRENT_SITE=/
-      - SITE_ID_CURRENT_SITE=1
-      - BLOG_ID_CURRENT_SITE=1
-      - WP_DEBUG=true
-      - WP_DEBUG_LOG=true
-      - WP_DEBUG_DISPLAY=true
     volumes:
       - wordpress_admin:/var/www/html
     networks:
