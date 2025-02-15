@@ -222,7 +222,7 @@ services:
           - node.hostname == my
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.admin.rule=Host(`tech-hub-central.duckdns.org`) || HostRegexp(`{subdomain:.+}.tech-hub-central.duckdns.org`)"
+        - "traefik.http.routers.admin.rule=Host(`tech-hub-central.duckdns.org`) || HostRegexp(`{subdomain:.+}.tech-hub-central.duckdns.org`) || Host(`blog.tech-hub-central.duckdns.org`)"
         - "traefik.http.routers.admin.entrypoints=websecure"
         - "traefik.http.routers.admin.tls=true"
         - "traefik.http.routers.admin.tls.certresolver=myresolver"
