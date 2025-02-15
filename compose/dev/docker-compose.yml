@@ -45,6 +45,8 @@ services:
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=traefik"
+    environment:
+      - DUCKDNS_TOKEN=${PWY_DUCKDNS_TOKEN}
 #  nginx:
 #    image: nginx:alpine
 #    deploy:

@@ -47,6 +47,8 @@ jobs:
 
       - name: Deploy with Docker Compose
         shell: bash
+        env:
+          DUCKDNS_TOKEN: ${{ secrets.PWY_DUCKDNS_TOKEN }}
         run: |
           echo "Initializing Docker Swarm (if not already initialized)..."
           docker swarm init || echo "Swarm already initialized"
