@@ -244,6 +244,7 @@ services:
 
     volumes:
       - wordpress_admin:/var/www/html
+      - /root/config/wordpress/.htaccess:/var/www/html/.htaccess
     networks:
       - internal-network
       - gateway
