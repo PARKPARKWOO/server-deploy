@@ -125,6 +125,22 @@ services:
     networks:
       - internal-network
 
+#  mysqld-exporter:
+#    container_name: mysqld_exporter
+#    image: prom/mysqld-exporter
+#    environment:
+#      - DATA_SOURCE_NAME="계정명:비밀번호@(mysql:3306)/"
+#    command:
+#      - "--mysqld.username=계정명:비밀번호"
+#      - "--mysqld.address=mysql:3306"
+#    links:
+#      - mysql
+#    ports:
+#      - 9104:9104
+#    depends_on:
+#      - mysql-master
+#    restart: unless-stopped
+
 networks:
   internal-network:
     driver: overlay
