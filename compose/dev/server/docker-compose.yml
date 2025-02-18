@@ -242,10 +242,8 @@ services:
         define( 'PATH_CURRENT_SITE', '/' );
         define( 'SITE_ID_CURRENT_SITE', 1 );
         define( 'BLOG_ID_CURRENT_SITE', 1 );
-        
-
-#  define('WP_HOME','https://platformholder.site');
-#  define('WP_SITEURL','https://platformholder.site');
+        define('WP_HOME','https://tech-hub-central.duckdns.org');
+        define('WP_SITEURL','https://tech-hub-central.duckdns.org');
     volumes:
       - wordpress_admin:/var/www/html
       - /root/config/wordpress/.htaccess:/var/www/html/.htaccess
