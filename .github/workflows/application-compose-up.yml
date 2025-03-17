@@ -24,6 +24,7 @@ on:
           - barbellrobot-backend
           - gateway
           - eureka
+          - storage
 
 jobs:
   deploy:

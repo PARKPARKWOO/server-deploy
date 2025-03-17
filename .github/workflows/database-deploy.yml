@@ -19,9 +19,9 @@ on:
         options:
           - all
           - redis
-          - find-my-pet-mysql
-          - barbell-robot-mysql
+          - mysql-master
           - mongodb
+          - cassandra
 jobs:
   deploy-databases:
     runs-on: [self-hosted, label-deploy2]
