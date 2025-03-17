@@ -248,6 +248,35 @@ services:
     networks:
       - internal-network
       - gateway
+
+  storage:
+    image: 'wy9295/auth-server:69285ae12c11ad0e7ee4aeb713338b3d072e4c78'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
+    networks:
+      - internal-network
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URL=mysql-master
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - EUREKA_URI=http://eureka:8761/eureka
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - CASSANDRA_URL=cassandra1
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
 networks:
   barbellrobot-backend:
     driver: overlay

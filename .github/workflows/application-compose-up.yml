@@ -69,6 +69,8 @@ jobs:
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
           MONGODB_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
           MONGODB_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
+          CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
 #        run: |
 #          if [[ "${{ env.SERVICES }}" == "all" ]]; then
 #            echo "Deploying all services..."

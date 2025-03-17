@@ -48,6 +48,8 @@ jobs:
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           MONGO_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
+          CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
         run: |
           echo "Initializing Docker Swarm (if not already initialized)..."
           docker swarm init || echo "Swarm already initialized"
