@@ -80,6 +80,8 @@ services:
         published: 7001
         protocol: tcp
         mode: host
+    volumes:
+      - cassandra1-data:/var/lib/cassandra
 networks:
   barbellrobot-backend:
     driver: overlay
