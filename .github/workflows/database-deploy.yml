@@ -21,7 +21,7 @@ on:
           - redis
           - mysql-master
           - mongodb
-          - cassandra
+          - cassandra1
 jobs:
   deploy-databases:
     runs-on: [self-hosted, label-deploy2]

@@ -51,37 +51,21 @@ services:
     networks:
       - find-my-pet-backend
 
-  cassandra1:
-    image: cassandra:4.0.17
-    container_name: cassandra1
+  cassandra-1:
+    image: cassandra
     deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - "node.hostname == my"
       restart_policy:
         condition: on-failure
-    environment:
-      - CASSANDRA_CLUSTER_NAME=MyCluster
-      - CASSANDRA_DC=datacenter1
-      - CASSANDRA_RACK=rack1
-      - CASSANDRA_AUTHENTICATOR=PasswordAuthenticator
-      - CASSANDRA_AUTHORIZER=CassandraAuthorizer
-    ports:
-      - target: 9042
-        published: 9042
-        protocol: tcp
-        mode: host
-      - target: 7000
-        published: 7000
-        protocol: tcp
-        mode: host
-      - target: 7001
-        published: 7001
-        protocol: tcp
-        mode: host
+        max_attempts: 3
+        window: 120s
+      placement:
+        constraints:
+          - node.hostname == pve
     volumes:
-      - cassandra1-data:/var/lib/cassandra
+      - cassandra-1:/var/lib/cassandra
+    networks:
+      - internal-network
+
 networks:
   barbellrobot-backend:
     driver: overlay
@@ -100,3 +84,4 @@ volumes:
   barbellrobot-mysql-data:
   find-my-pet-mysql-data:
   mongo-data:
+  cassandra-1:
