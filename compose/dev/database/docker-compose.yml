@@ -52,7 +52,7 @@ services:
       - find-my-pet-backend
 
   cassandra-1:
-    image: cassandra
+    image: cassandra:latest
     deploy:
       restart_policy:
         condition: on-failure
