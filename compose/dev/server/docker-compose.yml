@@ -134,6 +134,8 @@ services:
       - BBR_HOST=barbellrobot-backend
       - FMP_HOST=find-my-pet-backend
       - AUTH_HOST=auth-server
+      - STORAGE_HOST=storage
+      - STORAGE_NAME=dev-storage
       - EUREKA_URI=http://eureka:8761/eureka
 
   eureka:
