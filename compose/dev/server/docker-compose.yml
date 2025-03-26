@@ -118,7 +118,7 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`)"
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
         - "traefik.http.routers.gateway.entrypoints=websecure"
         - "traefik.http.routers.gateway.tls=true"
