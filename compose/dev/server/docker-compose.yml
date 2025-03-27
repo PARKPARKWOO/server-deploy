@@ -64,6 +64,8 @@ services:
       - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
       - AUTH_NAME=auth
       - AUTH_HOST=auth
+      - STORAGE_NAME=storage
+      - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - KAFKA_HOST=kafka1:9092
       - EUREKA_URI=http://eureka:8761/eureka
       - MONGODB_USERNAME=${MONGODB_USERNAME}
