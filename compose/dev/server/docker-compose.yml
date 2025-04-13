@@ -244,7 +244,7 @@ services:
       - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
       - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
   forest:
-    image: 'wy9295/forest:c13720b1d8e0132dafd897d0ee385151120ef065'
+    image: 'wy9295/forest:49d66e41df17568dfc8390e1cf38849586065010'
     deploy:
       replicas: 1
       restart_policy:
