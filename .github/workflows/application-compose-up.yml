@@ -25,6 +25,7 @@ on:
           - gateway
           - eureka
           - storage
+          - forest
 
 jobs:
   deploy:
