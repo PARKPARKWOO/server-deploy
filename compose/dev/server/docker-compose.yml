@@ -106,7 +106,7 @@ services:
 #      - EUREKA_URI=http://eureka:8761/eureka
 
   gateway:
-    image: 'wy9295/gateway:1ce40eccd99beb197136786e44c2d638b53bfe9a'
+    image: 'wy9295/gateway:f630e31933fbbd6a5306e7345690238f1db7d46b'
     deploy:
       replicas: 1
       restart_policy:
@@ -139,6 +139,8 @@ services:
       - STORAGE_HOST=storage
       - STORAGE_NAME=dev-storage
       - EUREKA_URI=http://eureka:8761/eureka
+      - FOREST_NAME=forest
+      - FOREST_HOST=forest
 
   eureka:
     image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
