@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   auth-server:
-    image: 'wy9295/auth-server:6396de12be5602105f8cca38a261a644072ea746'
+    image: 'wy9295/auth-server:2c890d75bf19aa69a66e76f09b77c58a3f14093c'
     deploy:
       replicas: 1
       restart_policy:
