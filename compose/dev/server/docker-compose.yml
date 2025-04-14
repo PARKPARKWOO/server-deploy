@@ -139,7 +139,7 @@ services:
       - STORAGE_HOST=storage
       - STORAGE_NAME=dev-storage
       - EUREKA_URI=http://eureka:8761/eureka
-      - FOREST_NAME=forest
+      - FOREST_NAME=dev-forest
       - FOREST_HOST=forest
 
   eureka:
