@@ -50,6 +50,7 @@ services:
       - mongo-data:/data/db
     networks:
       - find-my-pet-backend
+      - internal-network
 
   cassandra-1:
     image: cassandra:latest
