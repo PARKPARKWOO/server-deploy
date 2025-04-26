@@ -1,4 +1,4 @@
-name: Deploy Loki and Grafana via Docker Compose
+name: Update prometheus configuration
 
 on:
   workflow_dispatch:
@@ -34,6 +34,11 @@ jobs:
           IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
         shell: bash
         run: |
-          docker service update --force dev_prometheus
+          SERVICE_NAME=${ENVIRONMENT}_prometheus
+          
+          echo "Forcing restart of '${SERVICE_NAME}' to pick up new prometheus.yml bind-mount..."
+          docker service update --force $SERVICE_NAME
+          
+          echo "Calling Prometheus hot-reload API..."
           curl -X POST http://localhost:9090/-/reload
 
