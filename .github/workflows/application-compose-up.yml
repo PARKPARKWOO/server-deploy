@@ -32,7 +32,7 @@ jobs:
     runs-on: [self-hosted, label-deploy2]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set environment variables
         shell: bash

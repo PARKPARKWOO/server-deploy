@@ -1,0 +1,39 @@
+name: Deploy Loki and Grafana via Docker Compose
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the environment"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+jobs:
+  deploy-loki-grafana:
+    runs-on: [self-hosted, label-deploy2]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        shell: bash
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+
+      - name: Docker Hub login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Deploy Loki and Grafana with Docker Compose
+        env:
+          IP_ALLOW_LIST: ${{ secrets.IP_ALLOW_LIST }}
+        shell: bash
+        run: |
+          docker service update --force dev_prometheus
+          curl -X POST http://localhost:9090/-/reload
+

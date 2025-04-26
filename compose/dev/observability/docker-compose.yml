@@ -10,15 +10,16 @@ services:
       placement:
         constraints:
           - "node.role == manager"
-    configs:
-      - source: prometheus_config
-        target: /etc/prometheus/prometheus.yml
+#    configs:
+#      - source: prometheus_config
+#        target: /etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     networks:
       - internal-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     user: "0:0"
 
   loki:
@@ -154,4 +155,5 @@ volumes:
 
 configs:
   prometheus_config:
+    external: true
     file: prometheus.yml
