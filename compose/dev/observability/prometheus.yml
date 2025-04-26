@@ -2,19 +2,47 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'application'
+  - job_name: 'auth_server'
     dns_sd_configs:
       - names:
           - 'tasks.auth-server'
-          - 'tasks.find-my-pet-backend'
-          - 'tasks.gateway'
-          - 'tasks.orchestrator'
-          - 'tasks.eureka'
         type: A
         port: 8080
     metrics_path: '/actuator/prometheus'
 
-  - job_name: 'node-exporter'
+  - job_name: 'find_my_pet'
+    dns_sd_configs:
+      - names:
+          - 'tasks.find-my-pet-backend'
+        type: A
+        port: 8080
+    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'gateway'
+    dns_sd_configs:
+      - names:
+          - 'tasks.gateway'
+        type: A
+        port: 8080
+    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'orchestrator'
+    dns_sd_configs:
+      - names:
+          - 'tasks.orchestrator'
+        type: A
+        port: 8080
+    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'eureka'
+    dns_sd_configs:
+      - names:
+          - 'tasks.eureka'
+        type: A
+        port: 8761
+    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'node_exporter'
     dns_sd_configs:
       - names:
           - 'tasks.node_exporter'
