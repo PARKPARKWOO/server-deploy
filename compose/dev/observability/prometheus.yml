@@ -14,6 +14,18 @@ scrape_configs:
         regex: 'tasks\.(.+)'
         target_label: 'application'
 
+  - job_name: 'storage'
+    dns_sd_configs:
+      - names:
+          - 'tasks.storage'
+        type: A
+        port: 8080
+    metrics_path: '/actuator/prometheus'
+    relabel_configs:
+      - source_labels: [ __meta_dns_sd_name ]
+        regex: 'tasks\.(.+)'
+        target_label: 'application'
+
   - job_name: 'find_my_pet'
     dns_sd_configs:
       - names:
