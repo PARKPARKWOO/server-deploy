@@ -2,21 +2,14 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'auth_server'
+  - job_name: 'spring_application'
     dns_sd_configs:
       - names:
           - 'tasks.auth-server'
-        type: A
-        port: 8080
-    metrics_path: '/actuator/prometheus'
-    relabel_configs:
-      - source_labels: [ __meta_dns_sd_name ]
-        regex: 'tasks\.(.+)'
-        target_label: 'application'
-
-  - job_name: 'storage'
-    dns_sd_configs:
-      - names:
+          - 'tasks.find-my-pet-backend'
+          - 'tasks.gateway'
+          - 'tasks.orchestrator'
+          - 'tasks.eureka'
           - 'tasks.storage'
         type: A
         port: 8080
@@ -25,66 +18,6 @@ scrape_configs:
       - source_labels: [ __meta_dns_sd_name ]
         regex: 'tasks\.(.+)'
         target_label: 'application'
-
-  - job_name: 'find_my_pet'
-    dns_sd_configs:
-      - names:
-          - 'tasks.find-my-pet-backend'
-        type: A
-        port: 8080
-    metrics_path: '/actuator/prometheus'
-    relabel_configs:
-      - source_labels: [ __meta_docker_service_name ]
-        target_label: 'application'
-      - source_labels: [ __address__ ]
-        regex: '(.+):\d+'
-        replacement: '$1:8080'
-        target_label: '__address__'
-
-  - job_name: 'gateway'
-    dns_sd_configs:
-      - names:
-          - 'tasks.gateway'
-        type: A
-        port: 8080
-    metrics_path: '/actuator/prometheus'
-    relabel_configs:
-      - source_labels: [ __meta_docker_service_name ]
-        target_label: 'application'
-      - source_labels: [ __address__ ]
-        regex: '(.+):\d+'
-        replacement: '$1:8080'         # 실제 메트릭 포트로 변경
-        target_label: '__address__'
-
-  - job_name: 'orchestrator'
-    dns_sd_configs:
-      - names:
-          - 'tasks.orchestrator'
-        type: A
-        port: 8080
-    metrics_path: '/actuator/prometheus'
-    relabel_configs:
-      - source_labels: [ __meta_docker_service_name ]
-        target_label: 'application'
-      - source_labels: [ __address__ ]
-        regex: '(.+):\d+'
-        replacement: '$1:8080'         # 실제 메트릭 포트로 변경
-        target_label: '__address__'
-
-  - job_name: 'eureka'
-    dns_sd_configs:
-      - names:
-          - 'tasks.eureka'
-        type: A
-        port: 8761
-    metrics_path: '/actuator/prometheus'
-    relabel_configs:
-      - source_labels: [ __meta_docker_service_name ]
-        target_label: 'application'
-      - source_labels: [ __address__ ]
-        regex: '(.+):\d+'
-        replacement: '$1:8080'         # 실제 메트릭 포트로 변경
-        target_label: '__address__'
 
   - job_name: 'node_exporter'
     dns_sd_configs:
