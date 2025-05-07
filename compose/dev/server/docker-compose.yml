@@ -277,6 +277,7 @@ services:
       - AUTH_HOST=auth
       - STORAGE_NAME=storage
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
+      - KAFKA_HOST=kafka1:9092
 
 
 networks:
