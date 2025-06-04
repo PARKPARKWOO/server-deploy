@@ -106,7 +106,7 @@ services:
 #      - EUREKA_URI=http://eureka:8761/eureka
 
   gateway:
-    image: 'wy9295/gateway:4dd03da28825b8f07472bd252d00ceb4841f8f2f'
+    image: 'wy9295/gateway:64d172757a5df64ebd96c50a585ec35fc2b44a90'
     deploy:
       replicas: 1
       restart_policy:
