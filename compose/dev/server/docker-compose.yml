@@ -219,7 +219,7 @@ services:
       - gateway
 
   storage:
-    image: 'wy9295/storage:ce23385a2a4538edcefae19a908e17f57fda7aa0'
+    image: 'wy9295/storage:62b6cf70d4d3844e9fec05d858eacf52069fbde4'
     deploy:
       replicas: 1
       restart_policy:
