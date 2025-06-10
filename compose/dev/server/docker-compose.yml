@@ -180,6 +180,9 @@ services:
       - AUTH_RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - KAFKA_HOST=kafka1:9092
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
   admin:
     image: wordpress:latest
     deploy:
