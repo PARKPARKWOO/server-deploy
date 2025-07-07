@@ -307,8 +307,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - EUREKA_URI=http://eureka:8761/eureka
-      - AUTH_NAME=auth
-      - AUTH_HOST=auth
+      - AUTH_NAME=auth-server
+      - AUTH_HOST=auth-server
       - KAFKA_HOST=kafka1:9092
 
 networks:
