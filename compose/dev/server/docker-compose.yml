@@ -284,7 +284,7 @@ services:
       - KAFKA_HOST=kafka1:9092
 
   websocket-server:
-    image: ''
+    image: 'wy9295/websocket-server:52e712b'
     deploy:
       replicas: 1
       restart_policy:
