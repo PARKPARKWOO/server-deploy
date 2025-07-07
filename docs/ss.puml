@@ -1,0 +1,29 @@
+@startuml
+actor Developer
+
+participant "빌드 테스트\n(Application Repos)" as BuildTest
+participant "버전 체크\n(Application Repos)" as VersionCheck
+participant Slack
+participant "이미지 빌드 & Dispatch\n(Application Repos)" as ImageDispatch
+participant "권한 체크\n(server-deploy Repo)" as PermissionCheck
+participant "Docker 배포\n(server-deploy Repo)" as DockerDeploy
+
+Developer -> BuildTest : push / PR
+BuildTest -> BuildTest : run CI
+BuildTest -> ImageDispatch : build success
+
+Developer -> VersionCheck : push / PR
+VersionCheck -> VersionCheck : run version check
+alt 모듈이 최신버전이 아니라면
+    VersionCheck -> Slack
+end
+
+ImageDispatch -> PermissionCheck : repository_dispatch
+note right
+application 정보와 docker image
+metadata 포함
+end note
+PermissionCheck -> PermissionCheck : validate user
+PermissionCheck -> DockerDeploy : authorized
+DockerDeploy -> DockerDeploy : docker-compose deploy
+@enduml
