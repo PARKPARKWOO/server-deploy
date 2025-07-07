@@ -290,6 +290,12 @@ services:
       restart_policy:
         condition: on-failure
       labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.ws-secure.rule=Host(`ws.platformholder.site`)"
+        - "traefik.http.routers.ws-secure.entrypoints=websecure"
+        - "traefik.http.routers.ws-secure.tls.certresolver=myresolver"
+        - "traefik.http.services.ws-service.loadbalancer.server.port=8080"
+        - "traefik.http.routers.ws-secure.service=ws-service"
         - "prometheus.enable=true"
         - "prometheus.scrape=true"
         - "prometheus.path=/actuator/prometheus"
