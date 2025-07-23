@@ -182,49 +182,12 @@ services:
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
       - REDIS_PORT=6379
       - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-  admin:
-    image: wordpress:latest
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints:
-          - node.hostname == my
-      labels:
-        - "traefik.enable=true"
-#        - "traefik.http.routers.admin.rule=Host(`tech-hub-central.duckdns.org`) || HostRegexp(`{subdomain:.+}.tech-hub-central.duckdns.org`) || Host(`blog.tech-hub-central.duckdns.org`) || Host(`blog.platformholder.site`) || Host(`platformholder.site`)"
-        - "traefik.http.routers.admin.rule=Host(`blog.platformholder.site`) || Host(`platformholder.site`)"
-        - "traefik.http.routers.admin.entrypoints=websecure"
-        - "traefik.http.routers.admin.tls=true"
-        - "traefik.http.routers.admin.tls.certresolver=myresolver"
-        - "traefik.http.services.admin.loadbalancer.server.port=80"
-        - "traefik.docker.network=internal-network"
-    environment:
-      WORDPRESS_DB_HOST: mysql-master
-      WORDPRESS_DB_USER: ${RDBMS_USERNAME}
-      WORDPRESS_DB_PASSWORD: ${RDBMS_PASSWORD}
-      WORDPRESS_DB_NAME: admin
-      WORDPRESS_CONFIG_EXTRA: |
-        define('WP_ALLOW_MULTISITE', true );
-        define( 'MULTISITE', true );
-        define( 'SUBDOMAIN_INSTALL', true );
-        define( 'DOMAIN_CURRENT_SITE', 'platformholder.site' );
-        define( 'PATH_CURRENT_SITE', '/' );
-        define( 'SITE_ID_CURRENT_SITE', 1 );
-        define( 'BLOG_ID_CURRENT_SITE', 1 );
-    volumes:
-      - wordpress_admin:/var/www/html
-      - /root/config/wordpress/.htaccess:/var/www/html/.htaccess
-    networks:
-      - internal-network
-      - gateway
+      - REDIS_PASSWORD=${REDIS_PASSWORD}0
 
   storage:
     image: 'wy9295/storage:62b6cf70d4d3844e9fec05d858eacf52069fbde4'
     deploy:
-      replicas: 1
+      replicas: 10
       restart_policy:
         condition: on-failure
       labels:
@@ -335,5 +298,3 @@ networks:
 
 volumes:
   google-key:
-  wordpress_data:
-  wordpress_admin:
