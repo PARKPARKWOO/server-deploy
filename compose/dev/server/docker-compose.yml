@@ -141,6 +141,8 @@ services:
       - EUREKA_URI=http://eureka:8761/eureka
       - FOREST_NAME=dev-forest
       - FOREST_HOST=forest
+      - MV_NAME=dev-mirror-view
+      - MV_HOST=mirror-view
 
   eureka:
     image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
@@ -273,6 +275,37 @@ services:
       - AUTH_NAME=auth-server
       - AUTH_HOST=auth-server:9090
       - KAFKA_HOST=kafka1:9092
+      - STORAGE_NAME=storage
+      - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
+
+  mirror-view-backend:
+    image: 'wy9295/mirror-view-backend'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
+    networks:
+      - internal-network
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - EUREKA_URI=http://eureka:8761/eureka
+      - AUTH_NAME=auth
+      - AUTH_HOST=auth
+      - KAFKA_HOST=kafka1:9092
+      - CASSANDRA_URL=cassandra-1
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
+      - RDBMS_URL=mysql-master
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
 
 networks:
   barbellrobot-backend:
