@@ -12,6 +12,7 @@ scrape_configs:
           - 'tasks.eureka'
           - 'tasks.storage'
           - 'tasks.forest'
+          - 'tasks.mirror-view-backend'
         type: A
         port: 8080
     metrics_path: '/actuator/prometheus'
