@@ -307,6 +307,7 @@ services:
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
+      - STORAGE_NAME=storage
 
 networks:
   barbellrobot-backend:
