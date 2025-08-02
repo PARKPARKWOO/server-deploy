@@ -277,6 +277,7 @@ services:
       - KAFKA_HOST=kafka1:9092
       - STORAGE_NAME=storage
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
+      - MV_HOST=http://mirror-view-backend:8080
 
   mirror-view-backend:
     image: 'wy9295/mirror-view-backend:3729fc9a90783f74404aad6408676c6bea5f1acc'
