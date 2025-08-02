@@ -279,7 +279,7 @@ services:
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
 
   mirror-view-backend:
-    image: 'wy9295/mirror-view-backend:d789083023a79992bfc44bf0d12dc778fd94fb8b'
+    image: 'wy9295/mirror-view-backend:aa49d7232d16efe8fb423243a3b91a8bad2ecb18'
     deploy:
       replicas: 1
       restart_policy:
