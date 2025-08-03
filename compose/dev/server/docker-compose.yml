@@ -184,7 +184,7 @@ services:
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
       - REDIS_PORT=6379
       - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD}0
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
 
   storage:
     image: 'wy9295/storage:2f79cfac7ecf5a0bb3dab93f1409f0af17cd4be8'
@@ -278,6 +278,7 @@ services:
       - STORAGE_NAME=storage
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - MV_HOST=http://mirror-view-backend:8080
+      - KAFKA_HOST=kafka1:9092
 
   mirror-view-backend:
     image: 'wy9295/mirror-view-backend:4297a3ddc9f4a004e6db4bd364af03747c6e67ca'
