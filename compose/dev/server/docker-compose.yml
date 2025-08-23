@@ -247,6 +247,8 @@ services:
       - STORAGE_NAME=storage
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - KAFKA_HOST=kafka1:9092
+      - AES_KEY=${AES_KEY}
+      - HMAC_KEY=${HMAC_KEY}
 
   websocket-server:
     image: 'wy9295/websocket-server:204b605'
