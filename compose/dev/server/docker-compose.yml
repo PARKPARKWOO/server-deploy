@@ -215,7 +215,7 @@ services:
       - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
       - KAFKA_HOST=kafka1:9092
   forest:
-    image: 'wy9295/forest:6e3d9bc7c1d8a2852fa773ea8a014cad056d9db2'
+    image: 'wy9295/forest:8fafc6362b75c1beeda01801284b0328b7753275'
     deploy:
       replicas: 1
       restart_policy:
