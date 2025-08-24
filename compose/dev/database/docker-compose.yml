@@ -160,9 +160,14 @@ services:
         # - "traefik.http.serversTransports.slow.forwardingTimeouts.readTimeout=600s"
         # - "traefik.http.serversTransports.slow.forwardingTimeouts.idleTimeout=600s"
         # - "traefik.http.serversTransports.slow.forwardingTimeouts.responseHeaderTimeout=600s"
-
     networks:
       - internal-network
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   minio-2:
     image: minio/minio:latest
@@ -173,6 +178,12 @@ services:
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
       MINIO_SERVER_URL: https://bucket.platformholder.site
       MINIO_BROWSER_REDIRECT_URL: https://minio.platformholder.site
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     volumes:
       - minio-2-data1:/data1
     secrets:
