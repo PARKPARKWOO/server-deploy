@@ -38,8 +38,6 @@ services:
       "--enforce-gtid-consistency=ON",
       "--character-set-server=utf8mb4",
       "--collation-server=utf8mb4_0900_ai_ci",
-      "--skip-character-set-client-handshake",
-      "--default-time-zone=SYSTEM"
     ]
     restart: always
     networks:
@@ -72,7 +70,6 @@ services:
       "--enforce-gtid-consistency=ON",
       "--character-set-server=utf8mb4",
       "--collation-server=utf8mb4_0900_ai_ci",
-      "--skip-character-set-client-handshake",
       "--default-time-zone=SYSTEM"
     ]
     restart: always
@@ -121,7 +118,7 @@ services:
   minio-1:
     image: minio/minio:latest
     command: [ "server","--console-address",":9001",
-               "http://tasks.dev_minio-1:9000/data1","http://tasks.dev_minio-2:9000/data1" ]
+               "http://dev_minio-1:9000/data1","http://dev_minio-2:9000/data1" ]
     environment:
       # Secrets via *_FILE
       MINIO_ROOT_USER_FILE: /run/secrets/minio_root_user
@@ -178,7 +175,7 @@ services:
   minio-2:
     image: minio/minio:latest
     command: [ "server","--console-address",":9001",
-               "http://tasks.dev_minio-1:9000/data1","http://tasks.dev_minio-2:9000/data1" ]
+               "http://dev_minio-1:9000/data1","http://dev_minio-2:9000/data1" ]
     environment:
       MINIO_ROOT_USER_FILE: /run/secrets/minio_root_user
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
