@@ -1,5 +1,11 @@
 version: '3.8'
 
+secrets:
+  minio_root_user:
+    external: true
+  minio_root_password:
+    external: true
+
 services:
   redis:
     image: redis:latest
