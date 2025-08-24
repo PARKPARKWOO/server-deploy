@@ -22,6 +22,19 @@ services:
     container_name: mysql-master
     environment:
       MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
+      TZ: Asia/Seoul            # 컨테이너 OS 타임존
+    command: [
+      "--server-id=1",
+      "--log-bin=mysql-bin",
+      "--binlog-format=ROW",
+      "--binlog_row_image=FULL",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_0900_ai_ci",
+      "--skip-character-set-client-handshake",
+      "--default-time-zone=SYSTEM"
+    ]
     restart: always
     networks:
       - barbellrobot-backend
@@ -34,6 +47,38 @@ services:
       placement:
         constraints:
           - "node.hostname == my"
+
+  mysql-replica-1:
+    image: mysql:8.4
+    container_name: mysql-replica-1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${RDBMS_PASSWORD}
+      TZ: Asia/Seoul
+    command: [
+      "--server-id=2",
+      "--relay-log=replica1-relay-bin",
+      "--read-only=ON",
+      "--super_read_only=ON",
+      "--log-bin=mysql-bin",
+      "--binlog-format=ROW",
+      "--binlog_row_image=FULL",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_0900_ai_ci",
+      "--skip-character-set-client-handshake",
+      "--default-time-zone=SYSTEM"
+    ]
+    restart: always
+    networks:
+      - internal-network
+    volumes:
+      - mysql-replica-1:/var/lib/mysql
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == pve"
 
   mongodb:
     image: mongo:latest
@@ -67,6 +112,82 @@ services:
     networks:
       - internal-network
 
+  minio-1:
+    image: minio/minio:latest
+    command: [ "server", "--console-address", ":9001",
+               "http://minio-1/data1", "http://minio-2/data1"]
+    environment:
+      # Secrets via *_FILE
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_root_user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
+
+      # Traefik 뒤에서 올바른 외부 URL 고정
+      MINIO_SERVER_URL: https://bucket.platformholder.site
+      MINIO_BROWSER_REDIRECT_URL: https://minio.platformholder.site
+      IP_ALLOW_LIST: ${IP_ALLOW_LIST}
+      # 필요시 자동암호화(KMS 붙이면 KES 설정 사용)
+      # MINIO_KMS_AUTO_ENCRYPTION: "on"
+
+    volumes:
+      - minio-1-data1:/data1
+    secrets:
+      - minio_root_user
+      - minio_root_password
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == pve
+      labels:
+        - "traefik.enable=true"
+        # S3 API
+        - "traefik.http.routers.minio-s3.rule=Host(`bucket.platformholder.site`)"
+        - "traefik.http.routers.minio-s3.entrypoints=websecure"
+        - "traefik.http.routers.minio-s3.tls.certresolver=myresolver"
+        - "traefik.http.services.minio-s3.loadbalancer.server.port=9000"
+
+        # Console
+        - "traefik.http.routers.minio-console.rule=Host(`minio.platformholder.site`)"
+        - "traefik.http.routers.minio-console.entrypoints=websecure"
+        - "traefik.http.routers.minio-console.tls.certresolver=myresolver"
+        - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
+        # white list 처리
+#        - "traefik.http.routers.minio-console.middlewares=minio-console-ipwhitelist@docker"
+#        - "traefik.http.middlewares.minio-console-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
+        # (선택) 큰 업로드에 대비한 서버 타임아웃 별도 ServersTransport 연결
+        # - "traefik.http.routers.minio-s3.transport=slow"
+        # - "traefik.http.serversTransports.slow.forwardingTimeouts.readTimeout=600s"
+        # - "traefik.http.serversTransports.slow.forwardingTimeouts.idleTimeout=600s"
+        # - "traefik.http.serversTransports.slow.forwardingTimeouts.responseHeaderTimeout=600s"
+
+    networks:
+      - internal-network
+
+  minio-2:
+    image: minio/minio:latest
+    command: [ "server", "--console-address", ":9001",
+               "http://minio-1/data1", "http://minio-2/data1" ]
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_root_user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
+      MINIO_SERVER_URL: https://bucket.platformholder.site
+      MINIO_BROWSER_REDIRECT_URL: https://minio.platformholder.site
+    volumes:
+      - minio-2-data1:/data1
+    secrets:
+      - minio_root_user
+      - minio_root_password
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == my
+      # 굳이 Traefik 라벨은 여기에 또 달 필요 없음(간단히 minio-1만 외부 노출)
+      # 내부 서비스는 internal-network 통해 minio-2로도 직접 접근 가능
+    networks:
+      - internal-network
+
 networks:
   barbellrobot-backend:
     driver: overlay
@@ -86,3 +207,9 @@ volumes:
   find-my-pet-mysql-data:
   mongo-data:
   cassandra-1:
+  mysql-replica-1:
+  minio-1-data1:
+  minio-1-data2:
+  minio-2-data1:
+  minio-2-data2:
+
