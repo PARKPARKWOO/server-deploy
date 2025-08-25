@@ -100,8 +100,13 @@ services:
       - internal-network
 
   cassandra-1:
-    image: cassandra:latest
+    image: cassandra:5.0.5
     deploy:
+      resources:
+        limits:
+          memory: 2g
+        reservations:
+          memory: 1g
       restart_policy:
         condition: on-failure
         max_attempts: 3
@@ -109,6 +114,13 @@ services:
       placement:
         constraints:
           - node.hostname == pve
+    environment:
+      JVM_OPTS: >-
+        -Xms1G -Xmx1G
+        -XX:MaxDirectMemorySize=512m
+        -XX:+AlwaysPreTouch
+        -XX:+ExitOnOutOfMemoryError
+        -XX:MaxGCPauseMillis=200
     volumes:
       - cassandra-1:/var/lib/cassandra
     networks:
