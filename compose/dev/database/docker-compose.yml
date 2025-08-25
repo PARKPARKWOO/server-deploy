@@ -75,7 +75,7 @@ services:
     networks:
       - internal-network
     volumes:
-      - mysql-replica-1:/var/lib/mysql
+      - mysql-replica-volume-1:/var/lib/mysql
     deploy:
       replicas: 1
       placement:
@@ -218,9 +218,7 @@ volumes:
   find-my-pet-mysql-data:
   mongo-data:
   cassandra-1:
-  mysql-replica-1:
+  mysql-replica-volume-1:
   minio-1-data1:
-  minio-1-data2:
   minio-2-data1:
-  minio-2-data2:
 
