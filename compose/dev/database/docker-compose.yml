@@ -159,12 +159,14 @@ services:
         - "traefik.http.routers.minio-s3.entrypoints=websecure"
         - "traefik.http.routers.minio-s3.tls.certresolver=myresolver"
         - "traefik.http.services.minio-s3.loadbalancer.server.port=9000"
+        - "traefik.http.routers.minio-s3.service=minio-s3"
 
         # Console
         - "traefik.http.routers.minio-console.rule=Host(`minio.platformholder.site`)"
         - "traefik.http.routers.minio-console.entrypoints=websecure"
         - "traefik.http.routers.minio-console.tls.certresolver=myresolver"
         - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
+        - "traefik.http.routers.minio-console.service=minio-console"
         # white list 처리
 #        - "traefik.http.routers.minio-console.middlewares=minio-console-ipwhitelist@docker"
 #        - "traefik.http.middlewares.minio-console-ipwhitelist.ipwhitelist.sourcerange=${IP_ALLOW_LIST}"
