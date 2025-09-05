@@ -172,8 +172,6 @@ volumes:
 
 configs:
   prometheus_config:
-    external: true
     file: ./prometheus.yml
   loki_config:
-    external: true
     file: ./loki.yml
