@@ -19,13 +19,11 @@ services:
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
+        mode: 0444
     ports:
       - "9090:9090"
     networks:
       - internal-network
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     user: "0:0"
 
   loki:
@@ -42,6 +40,7 @@ services:
     configs:
       - source: loki_config
         target: /etc/loki/loki.yaml
+        mode: 0444
     secrets:
       - s3_access_key
       - s3_secret_key
