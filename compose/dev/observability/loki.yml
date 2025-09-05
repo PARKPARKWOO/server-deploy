@@ -1,0 +1,43 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: s3
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    shared_store: s3
+  aws:
+    # (1) S3 URL 표기형
+    s3: s3://minioadmin:minioadmin@minio:9000
+    # 또는 (2) http URL 표기형 (일부 예제처럼 pathstyle + 버킷 경로)
+    # s3: http://minioadmin:minioadmin@minio:9000
+    s3forcepathstyle: true
+    insecure: true           # TLS 미사용(로컬) 시
+    bucketnames: loki        # 저장 버킷명
+
+# (옵션) 쿼리 튜닝 & 결과 캐시
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 200

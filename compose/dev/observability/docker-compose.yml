@@ -1,8 +1,14 @@
 version: "3.8"
 
+secrets:
+  minio_root_user:
+    external: true
+  minio_root_password:
+    external: true
+
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.5.0
     deploy:
       replicas: 1
       restart_policy:
@@ -10,9 +16,9 @@ services:
       placement:
         constraints:
           - "node.role == manager"
-#    configs:
-#      - source: prometheus_config
-#        target: /etc/prometheus/prometheus.yml
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     networks:
@@ -36,7 +42,7 @@ services:
       - internal-network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.0
     deploy:
       replicas: 1
       restart_policy:
@@ -98,7 +104,7 @@ services:
       - internal-network
 
   pyroscope:
-    image: grafana/pyroscope:latest
+    image: grafana/pyroscope:1.14.0
     ports:
       - "4040:4040"
     deploy:
@@ -114,7 +120,7 @@ services:
       - PYROSCOPE_LOG_LEVEL=info
 
   node_exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: quay.io/prometheus/node-exporter:v1.9.1
     command:
       - '--path.rootfs=/host'
     deploy:
@@ -156,4 +162,7 @@ volumes:
 configs:
   prometheus_config:
     external: true
-    file: prometheus.yml
+    file: ./prometheus.yml
+  loki_config:
+    external: true
+    file: ./loki.yml
