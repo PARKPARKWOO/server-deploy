@@ -40,7 +40,7 @@ services:
     networks:
       - internal-network
     configs:
-      - source: loki_yaml
+      - source: loki_config
         target: /etc/loki/loki.yaml
     secrets:
       - s3_access_key
