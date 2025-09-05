@@ -26,13 +26,10 @@ storage_config:
     cache_location: /loki/index_cache
     shared_store: s3
   aws:
-    # (1) S3 URL 표기형
-    s3: s3://minioadmin:minioadmin@minio:9000
-    # 또는 (2) http URL 표기형 (일부 예제처럼 pathstyle + 버킷 경로)
-    # s3: http://minioadmin:minioadmin@minio:9000
+    endpoint: http://minio-1:9000
     s3forcepathstyle: true
-    insecure: true           # TLS 미사용(로컬) 시
-    bucketnames: loki        # 저장 버킷명
+    insecure: true
+    bucketnames: log
 
 # (옵션) 쿼리 튜닝 & 결과 캐시
 query_range:

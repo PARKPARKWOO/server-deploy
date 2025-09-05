@@ -40,6 +40,18 @@ services:
           - "node.hostname == my"
     networks:
       - internal-network
+    configs:
+      - source: loki_yaml
+        target: /etc/loki/loki.yaml
+    secrets:
+      - s3_access_key
+      - s3_secret_key
+    environment:
+      - AWS_REGION=us-east-1
+    entrypoint: [ "/bin/sh","-c",
+      "export AWS_ACCESS_KEY_ID=$(cat /run/secrets/s3_access_key); \
+       export AWS_SECRET_ACCESS_KEY=$(cat /run/secrets/s3_secret_key); \
+       exec /usr/bin/loki -config.file=/etc/loki/loki.yaml -config.expand-env=true" ]
 
   grafana:
     image: grafana/grafana:12.0
