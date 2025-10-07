@@ -1,5 +1,11 @@
 version: '3.8'
 
+secrets:
+  s3_access_key:
+    external: true
+  s3_secret_key:
+    external: true
+
 services:
   auth-server:
     image: 'wy9295/auth-server:4122a847680f5506ac009ba129d9ff8e72da9db7'
@@ -197,6 +203,11 @@ services:
         - "prometheus.scrape=true"
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
+    secrets:
+      - source: s3_access_key
+        target: minio.access-key
+      - source: s3_secret_key
+        target: minio.secret-key
     networks:
       - internal-network
     environment:
@@ -214,6 +225,8 @@ services:
       - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
       - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
       - KAFKA_HOST=kafka1:9092
+      - SPRING_CONFIG_IMPORT=optional:configtree:/run/secrets/
+      - MINIO_URL=https://bucket.platformholder.site
   forest:
     image: 'wy9295/forest:913f8b4b2fe90404c6e670fc58c6e1eeaf565ffd'
     deploy:
@@ -294,6 +307,11 @@ services:
         - "prometheus.port=8080"
     networks:
       - internal-network
+#    secrets:
+#      - source: s3_access_key
+#        target: minio.access-key
+#      - source: s3_secret_key
+#        target: minio.secret-key
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
