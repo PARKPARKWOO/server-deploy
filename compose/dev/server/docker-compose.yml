@@ -193,7 +193,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
 
   storage:
-    image: 'wy9295/storage:710c1b45ee2ca56ee3f4695b089aa7779922b1e2'
+    image: 'wy9295/storage:77694e1376595b0cd0d0e8bc4105cb17aeeacaa9'
     deploy:
       replicas: 1
       restart_policy:
