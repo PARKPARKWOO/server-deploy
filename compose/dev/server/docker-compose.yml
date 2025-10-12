@@ -228,7 +228,7 @@ services:
       - SPRING_CONFIG_IMPORT=optional:configtree:/run/secrets/
       - MINIO_URL=https://bucket.platformholder.site
   forest:
-    image: 'wy9295/forest:148c56494a0f1b2700da1d8d4feb12457ca873de'
+    image: 'wy9295/forest:088797c68002a68543570a81a7d0462ab8517487'
     deploy:
       replicas: 1
       restart_policy:
