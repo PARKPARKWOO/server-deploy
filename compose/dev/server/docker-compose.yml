@@ -151,7 +151,7 @@ services:
       - MV_HOST=mirror-view
 
   eureka:
-    image: 'wy9295/eureka:4ca3b7545c6397cedaf1b14fc48971fda7c5d232'
+    image: 'wy9295/eureka:273ceb3db81d3726dd9db44eb1854e19c9a2af3b'
     deploy:
       replicas: 1
       restart_policy:
