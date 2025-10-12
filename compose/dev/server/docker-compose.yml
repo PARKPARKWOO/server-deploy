@@ -227,6 +227,7 @@ services:
       - KAFKA_HOST=kafka1:9092
       - SPRING_CONFIG_IMPORT=optional:configtree:/run/secrets/
       - MINIO_URL=https://bucket.platformholder.site
+      - MINIO_INTERNAL_URL=http://minio-1:9000
   forest:
     image: 'wy9295/forest:de8f64e7395919e8cbc7ff63ff66ec845fd51c87'
     deploy:
