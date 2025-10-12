@@ -229,7 +229,7 @@ services:
       - MINIO_URL=https://bucket.platformholder.site
       - MINIO_INTERNAL_URL=http://minio-1:9000
   forest:
-    image: 'wy9295/forest:de8f64e7395919e8cbc7ff63ff66ec845fd51c87'
+    image: 'wy9295/forest:44d169378d9d04e02ba66382ba992613e20b7b31'
     deploy:
       replicas: 1
       restart_policy:
