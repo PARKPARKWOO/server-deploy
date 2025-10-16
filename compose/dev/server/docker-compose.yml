@@ -296,7 +296,7 @@ services:
       - MV_HOST=http://mirror-view-backend:8080
 
   mirror-view-backend:
-    image: 'wy9295/mirror-view-backend:501bd8766e7745917b8d942ff0575b3078298c6c'
+    image: 'wy9295/mirror-view-backend:1ca208ef6b8d004decff7f3caad6d2ad018c1c92'
     deploy:
       replicas: 1
       restart_policy:
