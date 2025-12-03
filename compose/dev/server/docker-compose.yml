@@ -8,7 +8,7 @@ secrets:
 
 services:
   auth-server:
-    image: 'wy9295/auth-server:c6cf6e40f5456978c7884c745f653660b4dd775d'
+    image: 'wy9295/auth-server:5ae110a0f9fdff55285f3fd2920cb45821286367'
     deploy:
       replicas: 1
       restart_policy:
