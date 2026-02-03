@@ -361,8 +361,6 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - EUREKA_URI=http://eureka:8761/eureka
       - GRPC_PORT=9090
-      - API_KEY_ENCRYPTION_SECRET=${API_KEY_ENCRYPTION_SECRET}
-      - JWT_SECRET=${JWT_SECRET}
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
 
 networks:
