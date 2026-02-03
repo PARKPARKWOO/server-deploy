@@ -333,6 +333,38 @@ services:
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - STORAGE_NAME=storage
 
+  spring-ai:
+    image: 'wy9295/spring-ai:0000000000000000000000000000000000000000'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
+    networks:
+      - internal-network
+    environment:
+      - MYSQL_HOST=mysql-master
+      - MYSQL_PORT=3306
+      - MYSQL_USERNAME=${RDBMS_USERNAME}
+      - MYSQL_PASSWORD=${RDBMS_PASSWORD}
+      - FLYWAY_USER=${FLYWAY_USER}
+      - FLYWAY_PASSWORD=${FLYWAY_PASSWORD}
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - EUREKA_URI=http://eureka:8761/eureka
+      - GRPC_PORT=9090
+      - API_KEY_ENCRYPTION_SECRET=${API_KEY_ENCRYPTION_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+
 networks:
   barbellrobot-backend:
     driver: overlay

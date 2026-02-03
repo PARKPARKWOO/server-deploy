@@ -108,6 +108,14 @@ jobs:
           FMP_GOOGLE_CLIENT_ID: ${{ secrets.FMP_GOOGLE_CLIENT_ID }}
           FMP_GOOGLE_CLIENT_SECRET: ${{ secrets.FMP_GOOGLE_CLIENT_SECRET }}
           FMP_KAKAO_CLIENT_ID: ${{ secrets.FMP_KAKAO_CLIENT_ID }}
+          MONGODB_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          CASSANDRA_USERNAME: ${{ secrets.CASSANDRA_USERNAME }}
+          CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
+          AES_KEY: ${{ secrets.AES_KEY }}
+          HMAC_KEY: ${{ secrets.HMAC_KEY }}
+          FLYWAY_USER: ${{ secrets.RDBMS_USERNAME }}
+          FLYWAY_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
         run: |
           SERVICE_NAME=${{ env.APP_NAME }}
           STACK_NAME=${{ env.ENVIRONMENT }}

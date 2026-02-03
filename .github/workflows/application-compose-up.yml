@@ -26,6 +26,7 @@ on:
           - eureka
           - storage
           - forest
+          - spring-ai
 
 jobs:
   deploy:
@@ -75,6 +76,8 @@ jobs:
           CASSANDRA_PASSWORD: ${{ secrets.CASSANDRA_PASSWORD }}
           AES_KEY: ${{ secrets.AES_KEY }}
           HMAC_KEY: ${{ secrets.HMAC_KEY }}
+          FLYWAY_USER: ${{ secrets.RDBMS_USERNAME }}
+          FLYWAY_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
 #        run: |
 #          if [[ "${{ env.SERVICES }}" == "all" ]]; then
 #            echo "Deploying all services..."
