@@ -78,38 +78,35 @@ services:
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_HOST=mongodb
 
-#  barbellrobot-backend:
-#    image: 'wy9295/barbellrobot-backend:3ada73884b3b6fc4b0a011f0c5b3615c248fe14a'
-#    deploy:
-#      replicas: 1
-#      restart_policy:
-#        condition: on-failure
-#      placement:
-#        constraints:
-#          - "node.hostname == pve"
-#    networks:
-#      - internal-network
-#      - barbellrobot-backend
-#    volumes:
-#      - google-key:/root/.config/gcloud/key.json:ro
-#    command: >
-#      sh -c "gcloud auth activate-service-account --key-file=/root/.config/gcloud/key.json && java -jar app.jar"
-#    environment:
-#      - REDIS_PORT=6379
-#      - REDIS_HOST=redis
-#      - REDIS_PASSWORD=${REDIS_PASSWORD}
-#      - RDBMS_URI=mysql-master
-#      - RDBMS_USERNAME=${RDBMS_USERNAME}
-#      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
-#      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
-#      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
-#      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
-#      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
-#      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
-#      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
-#      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
-#      - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
-#      - EUREKA_URI=http://eureka:8761/eureka
+  barbellrobot-backend:
+    image: 'wy9295/barbellrobot-backend:latest'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
+    networks:
+      - internal-network
+      - barbellrobot-backend
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RDBMS_URI=mysql-master
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
+      - EUREKA_URI=http://eureka:8761/eureka
+      - AUTH_NAME=auth
+      - STORAGE_NAME=storage
+      - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
+      - APPLICATION_ID=019d1af5-288f-70d5-a39e-783fd6dc30af
 
   gateway:
     image: 'wy9295/gateway:b52dc572bba18127ba1d90b9948d3cd9f2e8d024'
@@ -126,7 +123,7 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`)"
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
         - "traefik.http.routers.gateway.entrypoints=websecure"
         - "traefik.http.routers.gateway.tls=true"
@@ -354,8 +351,8 @@ services:
       - MYSQL_PORT=3306
       - MYSQL_USERNAME=${RDBMS_USERNAME}
       - MYSQL_PASSWORD=${RDBMS_PASSWORD}
-      - FLYWAY_USER=${FLYWAY_USER}
-      - FLYWAY_PASSWORD=${FLYWAY_PASSWORD}
+      - FLYWAY_USER=${RDBMS_USERNAME}
+      - FLYWAY_PASSWORD=${RDBMS_PASSWORD}
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}

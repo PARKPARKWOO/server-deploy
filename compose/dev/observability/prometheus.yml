@@ -6,6 +6,7 @@ scrape_configs:
     dns_sd_configs:
       - names:
           - 'tasks.auth-server'
+          - 'tasks.barbellrobot-backend'
           - 'tasks.find-my-pet-backend'
           - 'tasks.gateway'
           - 'tasks.orchestrator'
