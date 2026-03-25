@@ -359,6 +359,7 @@ services:
       - EUREKA_URI=http://eureka:8761/eureka
       - GRPC_PORT=9090
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - API_KEY_SECRET_BASE64=${API_KEY_SECRET_BASE64}
 
 networks:
   barbellrobot-backend:
