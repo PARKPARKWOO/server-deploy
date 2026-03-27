@@ -333,7 +333,7 @@ services:
       - STORAGE_NAME=storage
 
   spring-ai:
-    image: 'wy9295/spring-ai:076383f82f7be0ef28fbc7dd44a5dd9430ac5a48'
+    image: 'wy9295/spring-ai:c6609247008826afc3244f8346c1e6339b9a1ff2'
     deploy:
       replicas: 1
       restart_policy:
