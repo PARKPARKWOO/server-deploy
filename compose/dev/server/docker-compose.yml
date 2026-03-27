@@ -123,7 +123,7 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`)"
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
         - "traefik.http.routers.gateway.entrypoints=websecure"
         - "traefik.http.routers.gateway.tls=true"
@@ -146,6 +146,8 @@ services:
       - FOREST_HOST=forest
       - MV_NAME=dev-mirror-view
       - MV_HOST=mirror-view
+      - BACKOFFICE_NAME=dev-backoffice-bff
+      - BACKOFFICE_HOST=backoffice-bff
 
   eureka:
     image: 'wy9295/eureka:273ceb3db81d3726dd9db44eb1854e19c9a2af3b'
@@ -360,6 +362,29 @@ services:
       - GRPC_PORT=9090
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
       - API_KEY_SECRET_BASE64=${API_KEY_SECRET_BASE64}
+
+  backoffice-bff:
+    image: 'wy9295/backoffice-bff:latest'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.enable=true"
+        - "prometheus.scrape=true"
+        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.port=8080"
+    networks:
+      - internal-network
+    environment:
+      - EUREKA_URI=http://eureka:8761/eureka
+      - AUTH_HOST=auth-server
+      - AUTH_GRPC_PORT=9090
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - COOKIE_DOMAIN=.platformholder.site
 
 networks:
   barbellrobot-backend:
