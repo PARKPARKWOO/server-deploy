@@ -17,9 +17,11 @@ services:
         constraints:
           - "node.role == manager"
     configs:
-      - source: prometheus_config_v3
+      - source: prometheus_config_v4
         target: /etc/prometheus/prometheus.yml
         mode: 0444
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - "9090:9090"
     networks:
@@ -136,26 +138,76 @@ services:
       mode: global
       restart_policy:
         condition: on-failure
+      labels:
+        - "prometheus.scrape=true"
+        - "prometheus.path=/metrics"
+        - "prometheus.port=9100"
+        - "prometheus.job=node"
     volumes:
       - '/:/host:ro,rslave'
     networks:
       - internal-network
 
-#  mysqld-exporter:
-#    container_name: mysqld_exporter
-#    image: prom/mysqld-exporter
-#    environment:
-#      - DATA_SOURCE_NAME="계정명:비밀번호@(mysql:3306)/"
-#    command:
-#      - "--mysqld.username=계정명:비밀번호"
-#      - "--mysqld.address=mysql:3306"
-#    links:
-#      - mysql
-#    ports:
-#      - 9104:9104
-#    depends_on:
-#      - mysql-master
-#    restart: unless-stopped
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.66.0
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.scrape=true"
+        - "prometheus.path=/metrics"
+        - "prometheus.port=9121"
+        - "prometheus.job=redis"
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - internal-network
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:v0.15.1
+    command:
+      - "--mysqld.address=mysql-master:3306"
+      - "--mysqld.username=${RDBMS_USERNAME}"
+    environment:
+      - MYSQLD_EXPORTER_PASSWORD=${RDBMS_PASSWORD}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == my"
+      labels:
+        - "prometheus.scrape=true"
+        - "prometheus.path=/metrics"
+        - "prometheus.port=9104"
+        - "prometheus.job=mysql"
+    networks:
+      - internal-network
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.9.0
+    command:
+      - "--kafka.server=kafka1:9092"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.hostname == pve"
+      labels:
+        - "prometheus.scrape=true"
+        - "prometheus.path=/metrics"
+        - "prometheus.port=9308"
+        - "prometheus.job=kafka"
+    networks:
+      - internal-network
 
 networks:
   internal-network:
@@ -169,7 +221,7 @@ volumes:
   grafana_data:
 
 configs:
-  prometheus_config_v3:
+  prometheus_config_v4:
     file: ./prometheus.yml
   loki_config_v1:
     file: ./loki.yml
