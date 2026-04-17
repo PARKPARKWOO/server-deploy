@@ -17,7 +17,7 @@ services:
         constraints:
           - "node.role == manager"
     configs:
-      - source: prometheus_config_v2
+      - source: prometheus_config_v3
         target: /etc/prometheus/prometheus.yml
         mode: 0444
     ports:
@@ -169,7 +169,7 @@ volumes:
   grafana_data:
 
 configs:
-  prometheus_config_v2:
+  prometheus_config_v3:
     file: ./prometheus.yml
   loki_config_v1:
     file: ./loki.yml
