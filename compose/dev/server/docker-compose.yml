@@ -65,10 +65,6 @@ services:
       - RDBMS_URI=mysql-master
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
-      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
-      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
-      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
-      - CLOUD_FRONT_DOMAIN_NAME=${CLOUD_FRONT_DOMAIN_NAME}
       - AUTH_NAME=auth
       - AUTH_HOST=auth
       - STORAGE_NAME=storage
@@ -106,6 +102,7 @@ services:
       - EUREKA_URI=http://eureka:8761/eureka
       - AUTH_NAME=auth
       - STORAGE_NAME=storage
+      - AI_SERVICE_NAME=spring-ai
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - APPLICATION_ID=019d1af5-288f-70d5-a39e-783fd6dc30af
 
@@ -124,7 +121,7 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`find-my-pet.duckdns.org`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`fmp.platformholder.site`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
         - "traefik.http.routers.gateway.entrypoints=websecure"
         - "traefik.http.routers.gateway.tls=true"
