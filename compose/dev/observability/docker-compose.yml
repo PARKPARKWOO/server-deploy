@@ -170,11 +170,16 @@ services:
 
   mysqld-exporter:
     image: prom/mysqld-exporter:v0.15.1
-    command:
-      - "--mysqld.address=mysql-master:3306"
-      - "--mysqld.username=${RDBMS_USERNAME}"
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        printf '[client]\nuser=%s\npassword=%s\nhost=mysql-master\nport=3306\n' \
+          "$$RDBMS_USERNAME" "$$RDBMS_PASSWORD" > /tmp/.my.cnf
+        exec /bin/mysqld_exporter --config.my-cnf=/tmp/.my.cnf
     environment:
-      - MYSQLD_EXPORTER_PASSWORD=${RDBMS_PASSWORD}
+      - RDBMS_USERNAME=${RDBMS_USERNAME}
+      - RDBMS_PASSWORD=${RDBMS_PASSWORD}
     deploy:
       replicas: 1
       restart_policy:
