@@ -38,6 +38,7 @@ services:
       - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
       - EUREKA_URI=http://eureka:8761/eureka
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-auth
 
   find-my-pet-backend:
     image: 'wy9295/find-my-pet-backend:a06a6ecd97a7339a49a7e02380b94c99a063c0ca'
@@ -187,6 +188,7 @@ services:
       - AUTH_RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - KAFKA_HOST=kafka1:9092
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-orchestrator
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -220,6 +222,7 @@ services:
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - EUREKA_URI=http://eureka:8761/eureka
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-storage
       - AUTH_NAME=auth
       - AUTH_HOST=auth
       - CASSANDRA_URL=cassandra-1
@@ -251,6 +254,7 @@ services:
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - EUREKA_URI=http://eureka:8761/eureka
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-forest
 #      - CASSANDRA_URL=cassandra-1
 #      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
 #      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
@@ -329,6 +333,7 @@ services:
       - RDBMS_USERNAME=${RDBMS_USERNAME}
       - RDBMS_PASSWORD=${RDBMS_PASSWORD}
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-mirror-view
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - STORAGE_NAME=storage
 
@@ -361,6 +366,7 @@ services:
       - EUREKA_URI=http://eureka:8761/eureka
       - GRPC_PORT=9090
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-spring-ai
       - API_KEY_SECRET_BASE64=${API_KEY_SECRET_BASE64}
 
   backoffice-bff:
@@ -384,6 +390,7 @@ services:
       - AUTH_HOST=auth-server
       - AUTH_GRPC_PORT=9090
       - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_APPLICATION_NAME=dev-backoffice-bff
       - COOKIE_DOMAIN=.platformholder.site
 
 networks:
