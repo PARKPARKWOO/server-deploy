@@ -163,7 +163,7 @@ services:
       - internal-network
 
   orchestrator:
-    image: 'wy9295/orchestrator:e920a6959ac83401cda61a0748e88596c89d6b23'
+    image: 'wy9295/orchestrator:798d4981dd564532020f2371925c0f7ceadec5e9'
     deploy:
       replicas: 1
       restart_policy:
