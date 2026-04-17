@@ -75,7 +75,7 @@ services:
 #    networks:
 #      - internal-network
   kafka1:
-    image: 'bitnami/kafka:latest'
+    image: 'bitnamilegacy/kafka:3.9'
     deploy:
       replicas: 1
       restart_policy:
