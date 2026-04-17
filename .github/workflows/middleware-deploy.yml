@@ -20,6 +20,17 @@ on:
           - all
           - reverse-proxy
           - kafka1
+  push:
+    branches: [main]
+    paths:
+      - 'compose/dev/docker-compose.yml'
+      - 'compose/dev/default.template'
+      - 'compose/dev/traefik.yml'
+      - '.github/workflows/middleware-deploy.yml'
+
+concurrency:
+  group: middleware-deploy-${{ github.event_name == 'push' && 'dev' || inputs.environment }}
+  cancel-in-progress: false
 
 jobs:
   deploy-middleware:
@@ -31,8 +42,13 @@ jobs:
       - name: Set environment variables
         shell: bash
         run: |
-          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
-          echo "SERVICES=${{ inputs.services }}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+            echo "SERVICES=${{ inputs.services }}" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+            echo "SERVICES=all" >> $GITHUB_ENV
+          fi
 
       - name: Docker Hub login
         uses: docker/login-action@v2

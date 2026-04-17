@@ -22,6 +22,16 @@ on:
           - grafana
           - prometheus
           - node_exporter
+  push:
+    branches: [main]
+    paths:
+      - 'compose/dev/observability/**'
+      - '.github/workflows/apm-deploy.yml'
+
+concurrency:
+  group: apm-deploy-${{ github.event_name == 'push' && 'dev' || inputs.environment }}
+  cancel-in-progress: false
+
 jobs:
   deploy-loki-grafana:
     runs-on: [self-hosted, label-deploy2]
@@ -32,7 +42,11 @@ jobs:
       - name: Set environment variables
         shell: bash
         run: |
-          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+          fi
 
       - name: Docker Hub login
         uses: docker/login-action@v2
