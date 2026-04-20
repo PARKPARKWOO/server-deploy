@@ -547,8 +547,9 @@ services:
         - "prometheus.scrape=true"
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
+    # NOTE: bff base image (eclipse-temurin:21-jre-alpine)는 bash 없음 → busybox wget 사용
     healthcheck:
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/actuator/health"]
       interval: 15s
       timeout: 5s
       retries: 3
