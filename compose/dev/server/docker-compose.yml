@@ -76,7 +76,7 @@ services:
       - MONGODB_HOST=mongodb
 
   barbellrobot-backend:
-    image: 'wy9295/barbellrobot-backend:f614349ce2d1968eb81e3cc21c321d2c79c3cb8a'
+    image: 'wy9295/barbellrobot-backend:6ff50dc331b15ad7f3b0c8ce2f366bb7c44ce7eb'
     deploy:
       replicas: 1
       restart_policy:
