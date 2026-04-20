@@ -386,7 +386,7 @@ services:
       - HMAC_KEY=${HMAC_KEY}
 
   websocket-server:
-    image: 'wy9295/websocket-server:204b605'
+    image: 'wy9295/websocket-server:841abc9'
     deploy:
       replicas: 1
       restart_policy:
