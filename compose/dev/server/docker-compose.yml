@@ -107,7 +107,7 @@ services:
       - APPLICATION_ID=019d1af5-288f-70d5-a39e-783fd6dc30af
 
   gateway:
-    image: 'wy9295/gateway:fbd51e86425065900b226be4d7c3c7f248ee6487'
+    image: 'wy9295/gateway:595cf66860e9b8d7cc7058c8534c215b73c8c8f6'
     deploy:
       replicas: 1
       restart_policy:
