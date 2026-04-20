@@ -105,6 +105,12 @@ services:
       - AI_SERVICE_NAME=spring-ai
       - PLATFORM_HOLDER_CDN_HOST=https://cdn.platformholder.site
       - APPLICATION_ID=019d1af5-288f-70d5-a39e-783fd6dc30af
+      - ACCESS_SECRET_KEY=${ACCESS_SECRET_KEY}
+      - ACCESS_EXPIRE_MILLIS=${ACCESS_EXPIRE_MILLIS}
+      - REFRESH_SECRET_KEY=${REFRESH_SECRET_KEY}
+      - REFRESH_EXPIRE_MILLIS=${REFRESH_EXPIRE_MILLIS}
+      - GMAIL_USERNAME=${GMAIL_USERNAME}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
 
   gateway:
     image: 'wy9295/gateway:595cf66860e9b8d7cc7058c8534c215b73c8c8f6'
@@ -289,7 +295,7 @@ services:
         - "traefik.http.routers.ws-secure.service=ws-service"
         - "prometheus.enable=true"
         - "prometheus.scrape=true"
-        - "prometheus.path=/actuator/prometheus"
+        - "prometheus.path=/metrics"
         - "prometheus.port=8080"
     networks:
       - internal-network
