@@ -121,11 +121,19 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`fmp.platformholder.site`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
+        # 메인 라우터: duckdns DNS challenge로 발급된 기존 cert 사용.
+        # fmp.platformholder.site 는 이 번들에서 제외 — cert 갱신 영향 격리.
+        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
         - "traefik.http.routers.gateway.entrypoints=websecure"
         - "traefik.http.routers.gateway.tls=true"
         - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+        # 격리된 fmp 라우터: TLS-ALPN-01로 자체 cert 발급. 실패해도 위 번들과 독립.
+        - "traefik.http.routers.fmp-gateway.rule=Host(`fmp.platformholder.site`)"
+        - "traefik.http.routers.fmp-gateway.service=gateway"
+        - "traefik.http.routers.fmp-gateway.entrypoints=websecure"
+        - "traefik.http.routers.fmp-gateway.tls=true"
+        - "traefik.http.routers.fmp-gateway.tls.certresolver=fmpresolver"
         - "traefik.docker.network=gateway"
     networks:
       - internal-network

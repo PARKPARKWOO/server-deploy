@@ -26,6 +26,11 @@ services:
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.myresolver.acme.dnsChallenge.provider=duckdns"
       - "--certificatesresolvers.myresolver.acme.dnsChallenge.delayBeforeCheck=20"
+      # fmpresolver: TLS-ALPN-01 only. platformholder.site 서브도메인용 격리 resolver.
+      # DNS challenge 안 쓰므로 가비아 API 없이도 발급 가능. 실패해도 myresolver에 영향 없음.
+      - "--certificatesresolvers.fmpresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.fmpresolver.acme.email=wy9295@naver.com"
+      - "--certificatesresolvers.fmpresolver.acme.storage=/letsencrypt/acme-fmp.json"
       - "--metrics.prometheus=true"
       - "--metrics.prometheus.addEntryPointsLabels=true"
       - "--metrics.prometheus.addServicesLabels=true"
