@@ -116,8 +116,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Deploy with Docker Stack
+      - name: Deploy with Docker Stack (verify + fallback)
         env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           RDBMS_USERNAME: ${{ secrets.RDBMS_USERNAME }}
@@ -147,17 +148,78 @@ jobs:
           FLYWAY_PASSWORD: ${{ secrets.RDBMS_PASSWORD }}
         run: |
           set -euo pipefail
-          STACK_NAME=${{ env.ENVIRONMENT }}
+          STACK_NAME="${{ env.ENVIRONMENT }}"
           COMPOSE_FILE="compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml"
+          SERVICE_NAME="${STACK_NAME}_${{ env.APP_NAME }}"
+          TARGET_IMAGE="${DOCKERHUB_USERNAME}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}"
 
-          echo "Deploying stack: $STACK_NAME (triggered by ${{ env.APP_NAME }} -> ${{ env.IMAGE_TAG }})"
-
+          echo ">>> Deploying stack: $STACK_NAME (trigger=${{ env.APP_NAME }} -> ${{ env.IMAGE_TAG }})"
           docker stack deploy \
             -c "$COMPOSE_FILE" \
             --with-registry-auth \
             --prune=false \
             "$STACK_NAME"
 
-          echo "--- services after deploy ---"
-          docker stack services "$STACK_NAME"
+          echo ""
+          echo ">>> Step 1/3: Waiting up to 180s for service spec to reflect TARGET_IMAGE=$TARGET_IMAGE"
+          DEADLINE=$(( $(date +%s) + 180 ))
+          while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+            CURRENT=$(docker service inspect "$SERVICE_NAME" \
+              --format '{{.Spec.TaskTemplate.ContainerSpec.Image}}' 2>/dev/null \
+              | sed 's/@sha256:.*$//' || echo "")
+            if [ "$CURRENT" = "$TARGET_IMAGE" ]; then
+              echo "    spec already matches"
+              break
+            fi
+            echo "    current spec: $CURRENT (waiting...)"
+            sleep 5
+          done
+
+          FINAL_SPEC=$(docker service inspect "$SERVICE_NAME" \
+            --format '{{.Spec.TaskTemplate.ContainerSpec.Image}}' | sed 's/@sha256:.*$//')
+
+          if [ "$FINAL_SPEC" != "$TARGET_IMAGE" ]; then
+            echo ""
+            echo ">>> Step 2/3: stack deploy did not refresh spec. Falling back to docker service update."
+            echo "    Expected: $TARGET_IMAGE"
+            echo "    Actual:   $FINAL_SPEC"
+            docker service update --with-registry-auth \
+              --image "$TARGET_IMAGE" \
+              "$SERVICE_NAME"
+          else
+            echo ""
+            echo ">>> Step 2/3: skipped — spec already updated."
+          fi
+
+          echo ""
+          echo ">>> Step 3/3: Waiting up to 180s for at least one Running task with the target image..."
+          DEADLINE=$(( $(date +%s) + 180 ))
+          SUCCESS=0
+          while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+            RUNNING_COUNT=$(docker service ps "$SERVICE_NAME" \
+              --filter "desired-state=running" \
+              --format '{{.CurrentState}}' \
+              | grep -c '^Running' || true)
+            if [ "$RUNNING_COUNT" -ge 1 ]; then
+              SUCCESS=1
+              echo "    ✓ $RUNNING_COUNT running task(s)"
+              break
+            fi
+            echo "    (no running tasks yet, waiting...)"
+            sleep 10
+          done
+
+          echo ""
+          echo ">>> Final service state:"
+          docker service ps "$SERVICE_NAME" --no-trunc | head -8 || true
+
+          if [ "$SUCCESS" -ne 1 ]; then
+            echo ""
+            echo "!!! Rollout verification FAILED. No Running task within 3 minutes."
+            echo "!!! Check above ps output for CurrentState / ERROR columns."
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ Deploy verified: $SERVICE_NAME running with $TARGET_IMAGE"
 
