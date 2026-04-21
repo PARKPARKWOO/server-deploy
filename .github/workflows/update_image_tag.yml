@@ -5,6 +5,13 @@ on:
     types: [update_app_image_tag]
   workflow_dispatch:
 
+# 여러 앱이 동시에 dispatch 해도 compose/.../server/docker-compose.yml 에 대한
+# 쓰기 경합(race)을 피하기 위해 환경 단위로 직렬화한다.
+# cancel-in-progress=false: 앞 실행을 절대 취소하지 않음 (태그 드롭 방지).
+concurrency:
+  group: update-image-tag-${{ github.event.client_payload.environment || inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
 jobs:
   restricted-workflow:
     name: Run Restricted Workflow
@@ -19,7 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        # rebase retry 가 shallow clone에서도 실패하지 않도록 full history.
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set environment variables
         run: |
@@ -48,17 +58,36 @@ jobs:
         run: |
           git diff compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml || echo "No changes in the file."
 
-      - name: Commit and Push Changes
+      - name: Commit and Push Changes (with rebase retry)
         run: |
+          set -euo pipefail
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
           git add compose/${{ env.ENVIRONMENT }}/server/docker-compose.yml
           if git diff --cached --exit-code; then
             echo "No changes to commit."
-          else
-            git commit -m "Update image tag for ${{ env.APP_NAME }} to ${{ env.IMAGE_TAG }}"
-            git push
+            exit 0
           fi
+          git commit -m "Update image tag for ${{ env.APP_NAME }} to ${{ env.IMAGE_TAG }}"
+
+          # concurrency 로 원칙적 경합은 제거됐지만,
+          # 외부 커밋이 끼어들 극한 경우에 대비해 rebase 재시도 루프.
+          MAX_ATTEMPTS=5
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            if git push; then
+              echo "Push succeeded on attempt $i"
+              exit 0
+            fi
+            echo "Push rejected on attempt $i, attempting rebase onto origin/main..."
+            git fetch origin main
+            git pull --rebase origin main || {
+              echo "Rebase failed on attempt $i (possible conflict on the same service tag line)."
+              exit 1
+            }
+          done
+          echo "All $MAX_ATTEMPTS attempts exhausted."
+          exit 1
 
   deploy:
     needs: commit-changes
