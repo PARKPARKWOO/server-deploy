@@ -5,6 +5,10 @@ secrets:
     external: true
   s3_secret_key:
     external: true
+  ors_api_key:
+    external: true
+  public_data_api_key:
+    external: true
 
 services:
   auth-server:
@@ -88,6 +92,11 @@ services:
       - internal-network
       - find-my-pet-backend
 #    - AUTH_HOST=auth 는 전환 때문에 잠시 추가함 최신버전 배포 후 수정
+    secrets:
+      - source: ors_api_key
+        target: ors_api_key
+      - source: public_data_api_key
+        target: public_data_api_key
     environment:
       - REDIS_PORT=6379
       - REDIS_HOST=redis
@@ -104,6 +113,8 @@ services:
       - MONGODB_USERNAME=${MONGODB_USERNAME}
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_HOST=mongodb
+      - ORS_API_KEY_FILE=/run/secrets/ors_api_key
+      - PUBLIC_DATA_API_KEY_FILE=/run/secrets/public_data_api_key
 
   barbellrobot-backend:
     image: 'wy9295/barbellrobot-backend:4e6cb40cbaac2fee89df02b9ae69d4b0b2330a1b'
