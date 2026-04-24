@@ -117,7 +117,7 @@ services:
       - PUBLIC_DATA_API_KEY_FILE=/run/secrets/public_data_api_key
 
   barbellrobot-backend:
-    image: 'wy9295/barbellrobot-backend:b2b95468a95d2109e24702d948e4873ea3111a5a'
+    image: 'wy9295/barbellrobot-backend:60c6f3ec5e7286e029328c694cce5a3d86337bd5'
     deploy:
       replicas: 1
       restart_policy:
