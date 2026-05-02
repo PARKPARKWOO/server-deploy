@@ -60,7 +60,7 @@ services:
       - PYROSCOPE_APPLICATION_NAME=dev-auth
 
   find-my-pet-backend:
-    image: 'wy9295/find-my-pet-backend:14fcabb38281bcf7c251a3f84b324d3d2f2b95f0'
+    image: 'wy9295/find-my-pet-backend:3d1a572d1d90122695289b5348f4ffecd82187ce'
     deploy:
       replicas: 1
       restart_policy:
