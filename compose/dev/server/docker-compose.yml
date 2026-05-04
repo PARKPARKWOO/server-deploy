@@ -291,7 +291,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
 
   storage:
-    image: 'wy9295/storage:eff61d19c4cec4ee0aa111885bb7cacc305581a1'
+    image: 'wy9295/storage:b3554d410e17168607b167dab67c42afabc6b6f9'
     extra_hosts:
       - "bucket.platformholder.site:172.30.1.42"
     deploy:
