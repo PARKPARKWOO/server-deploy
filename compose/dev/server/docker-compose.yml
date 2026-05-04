@@ -489,7 +489,7 @@ services:
       - STORAGE_NAME=storage
 
   spring-ai:
-    image: 'wy9295/spring-ai:69257106d77ef61628037b52b08256d3dd07b8bc'
+    image: 'wy9295/spring-ai:649a6bcfc762af9f99ae77dcabf57ae2ad6e26d4'
     deploy:
       replicas: 1
       restart_policy:
