@@ -169,7 +169,7 @@ services:
       - GMAIL_PASSWORD=${GMAIL_PASSWORD}
 
   gateway:
-    image: 'wy9295/gateway:935a3fdcc0b8e7054b41aea5a4b063333c2cef44'
+    image: 'wy9295/gateway:0064820856dacd2294ae6fb7f962639fdd342784'
     deploy:
       replicas: 1
       restart_policy:
