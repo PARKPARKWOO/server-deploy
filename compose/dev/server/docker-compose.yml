@@ -536,7 +536,7 @@ services:
       - API_KEY_SECRET_BASE64=${API_KEY_SECRET_BASE64}
 
   backoffice-bff:
-    image: 'wy9295/backoffice-bff:5dae01e5d056d2ccdbd47eb4ff0b270bc59fbdb1'
+    image: 'wy9295/backoffice-bff:4c433b0195e4e89aafbe0da9254a1992b67f8659'
     deploy:
       replicas: 1
       restart_policy:
