@@ -192,13 +192,56 @@ services:
         - "prometheus.path=/actuator/prometheus"
         - "prometheus.port=8080"
         - "traefik.enable=true"
-        # 메인 라우터: duckdns DNS challenge로 발급된 기존 cert 사용.
-        # fmp.platformholder.site 는 이 번들에서 제외 — cert 갱신 영향 격리.
-        - "traefik.http.routers.gateway.rule=Host(`woo-auth.duckdns.org`) || Host(`bbr.platformholder.site`) || Host(`cdn.platformholder.site`) || Host(`forest.platformholder.site`) || Host(`auth.platformholder.site`) || Host(`mirror-view.platformholder.site`) || Host(`gateway.platformholder.site`) || Host(`backoffice.platformholder.site`)"
+        # 라우터를 호스트별로 쪼갠 이유 — 인증서 churn 차단.
+        #
+        # 종전에는 라우터 하나가 `Host(a) || Host(b) || ...` 로 8개를 받았다. Traefik 은 "라우터가
+        # 쓰는 도메인 전부 = 인증서 1장" 으로 묶으므로 SAN 8개짜리 인증서가 만들어진다. 그런데 Let's
+        # Encrypt 에게 인증서의 정체성은 **이름의 집합**이다. {a,b,c,d} 와 {a,b,c} 는 같은 인증서가
+        # 바뀐 게 아니라 서로 다른 두 장이다.
+        #
+        # 그래서 이름이 하나만 달라져도 갱신이 아니라 신규 발급이 나갔다. 집합은 규칙을 고칠 때
+        # (fmp 가 빠지고 find-my-pet.duckdns.org 가 들어왔다) 뿐 아니라 롤링 배포 중 Traefik 눈에
+        # 일부 서비스만 보이는 순간에도 달라진다. 2026-07-23~25 사흘 동안 SAN 6→1→5→4→7 로
+        # 다섯 장이 발급됐고, 지금도 6/19·7/23·7/25 판 세 장이 동시에 서빙되고 있었다.
+        # 그 결과 LE 의 "동일 인증서 주당 5장" 한도에 걸리면 8개 호스트가 한꺼번에 자체서명으로
+        # 떨어진다 — https 갱신이 가끔 안 되던 원인이다.
+        #
+        # 호스트당 라우터 1개면 인증서에 이름이 하나뿐이라 집합이 바뀔 수가 없다. 배포 중 서비스가
+        # 잠깐 사라져도 그 호스트 하나만 영향받고, 다음부터는 이름이 같으므로 진짜 갱신이 된다.
+        # 모든 라우터가 `service=gateway` 로 같은 백엔드를 가리키므로 트래픽 경로는 종전과 동일하다.
         - "traefik.http.services.gateway.loadbalancer.server.port=8080"
-        - "traefik.http.routers.gateway.entrypoints=websecure"
-        - "traefik.http.routers.gateway.tls=true"
-        - "traefik.http.routers.gateway.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-wooauth.rule=Host(`woo-auth.duckdns.org`)"
+        - "traefik.http.routers.gw-wooauth.entrypoints=websecure"
+        - "traefik.http.routers.gw-wooauth.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-wooauth.service=gateway"
+        - "traefik.http.routers.gw-bbr.rule=Host(`bbr.platformholder.site`)"
+        - "traefik.http.routers.gw-bbr.entrypoints=websecure"
+        - "traefik.http.routers.gw-bbr.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-bbr.service=gateway"
+        - "traefik.http.routers.gw-cdn.rule=Host(`cdn.platformholder.site`)"
+        - "traefik.http.routers.gw-cdn.entrypoints=websecure"
+        - "traefik.http.routers.gw-cdn.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-cdn.service=gateway"
+        - "traefik.http.routers.gw-forest.rule=Host(`forest.platformholder.site`)"
+        - "traefik.http.routers.gw-forest.entrypoints=websecure"
+        - "traefik.http.routers.gw-forest.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-forest.service=gateway"
+        - "traefik.http.routers.gw-auth.rule=Host(`auth.platformholder.site`)"
+        - "traefik.http.routers.gw-auth.entrypoints=websecure"
+        - "traefik.http.routers.gw-auth.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-auth.service=gateway"
+        - "traefik.http.routers.gw-mirrorview.rule=Host(`mirror-view.platformholder.site`)"
+        - "traefik.http.routers.gw-mirrorview.entrypoints=websecure"
+        - "traefik.http.routers.gw-mirrorview.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-mirrorview.service=gateway"
+        - "traefik.http.routers.gw-gateway.rule=Host(`gateway.platformholder.site`)"
+        - "traefik.http.routers.gw-gateway.entrypoints=websecure"
+        - "traefik.http.routers.gw-gateway.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-gateway.service=gateway"
+        - "traefik.http.routers.gw-backoffice.rule=Host(`backoffice.platformholder.site`)"
+        - "traefik.http.routers.gw-backoffice.entrypoints=websecure"
+        - "traefik.http.routers.gw-backoffice.tls.certresolver=myresolver"
+        - "traefik.http.routers.gw-backoffice.service=gateway"
         # 격리된 fmp 라우터: TLS-ALPN-01로 자체 cert 발급. 실패해도 위 번들과 독립.
         - "traefik.http.routers.fmp-gateway.rule=Host(`fmp.platformholder.site`)"
         - "traefik.http.routers.fmp-gateway.service=gateway"
