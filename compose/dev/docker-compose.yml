@@ -21,11 +21,16 @@ services:
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
+      # challenge 는 resolver 당 **하나만** 동작한다. 여기에 tlschallenge 와 dnsChallenge 가 둘 다
+      # 걸려 있었고, Traefik 은 그 경우 DNS 를 택한다. 그런데 duckdns 토큰으로는 duckdns.org 존의
+      # TXT 만 만들 수 있어 platformholder.site(가비아 존) 검증이 성립하지 않는다. 즉 발급 경로가
+      # 설정만 봐서는 설명되지 않는 상태였다.
+      # 와일드카드를 쓰지 않으므로 DNS-01 이 필요 없다. TLS-ALPN-01 단독으로 통일해 동작을
+      # 결정적으로 만든다 — fmpresolver 가 이미 TLS-ALPN 단독으로 정상 발급받고 있어 이 서버에서
+      # 동작한다는 것은 증명돼 있다.
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.myresolver.acme.dnsChallenge.provider=duckdns"
-      - "--certificatesresolvers.myresolver.acme.dnsChallenge.delayBeforeCheck=20"
       # fmpresolver: TLS-ALPN-01 only. platformholder.site 서브도메인용 격리 resolver.
       # DNS challenge 안 쓰므로 가비아 API 없이도 발급 가능. 실패해도 myresolver에 영향 없음.
       - "--certificatesresolvers.fmpresolver.acme.tlschallenge=true"
@@ -45,13 +50,16 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
+    # loki 드라이버로 두면 Traefik 로그가 어디에도 남지 않는다. Loki 에는 `job` 라벨 자체가 없고
+    # (실제 유입은 Spring 앱들이 직접 push 하는 `app=` 스트림뿐), Docker 는 json-file/journald 가
+    # 아니면 `docker service logs` 읽기를 지원하지 않는다. 즉 쓰기도 안 되고 읽기도 안 되는 상태였다.
+    # ACME 실패 원인을 사후에 볼 수 있어야 해서 json-file 로 되돌린다. 회전 옵션이 없으면 액세스로그가
+    # 디스크를 채우므로 함께 건다.
     logging:
-      driver: loki
+      driver: json-file
       options:
-        loki-url: "http://loki:3100/loki/api/v1/push"
-        loki-external-labels: "job=traefik"
-    environment:
-      - DUCKDNS_TOKEN=${PWY_DUCKDNS_TOKEN}
+        max-size: "20m"
+        max-file: "5"
 #  nginx:
 #    image: nginx:alpine
 #    deploy:
