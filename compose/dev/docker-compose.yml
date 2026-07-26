@@ -18,6 +18,13 @@ services:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
       - "--providers.docker.swarmMode=true"
+      # 기본값이 true 라서 Traefik 이 스웜의 모든 컨테이너를 라우팅하려 들고, 포트 라벨이 없는
+      # 25개 남짓이 갱신 주기마다 `port is missing` 에러를 뱉는다. 라우팅에 영향은 없지만 로그를
+      # 가득 채워, json-file 회전(20MB x 5) 안에서 정작 봐야 할 ACME 로그를 밀어낸다.
+      # traefik.yml 에 exposedByDefault: false 가 적혀 있으나 그 파일은 마운트되지 않아 죽은 설정이다.
+      # 라우터가 걸린 서비스(gateway, websocket-server, grafana, minio-1)에는 전부
+      # traefik.enable=true 가 있으므로 끄더라도 노출이 끊기는 경로는 없다.
+      - "--providers.docker.exposedByDefault=false"
       - "--entrypoints.eureka.address=:8761"
       - "--accesslog=true"
       - "--entrypoints.websecure.address=:443"
