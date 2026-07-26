@@ -205,6 +205,27 @@ services:
         - "traefik.http.routers.fmp-gateway.entrypoints=websecure"
         - "traefik.http.routers.fmp-gateway.tls=true"
         - "traefik.http.routers.fmp-gateway.tls.certresolver=fmpresolver"
+        # ── 카나리아 겸 apex 라우터 ──────────────────────────────────────────
+        # 목적 두 가지.
+        # 1) duckdns DNS challenge 를 걷어낸 뒤 TLS-ALPN-01 로 **실제 발급이 되는지** 확인한다.
+        #    기존 8개 호스트 번들의 SAN 집합을 전혀 건드리지 않으면서(= churn 을 새로 만들지 않으면서)
+        #    완전히 새로운 단일 도메인 인증서 1장을 요청하므로, 실패해도 살아있는 인증서에 영향이 없다.
+        #    여기서 발급이 확인돼야 호스트별 분리(8장 동시 요청)를 안전하게 진행할 수 있다.
+        # 2) AdSense 에 등록한 사이트가 platformholder.site 인데 apex 가 응답하지 않는다.
+        #    443 은 열려 있고 이 호스트를 받는 라우터만 없던 상태다.
+        #
+        # blog 로 301 을 보내는 이유: apex 가 블로그(자체 저작 콘텐츠)를 보여주게 되고,
+        # ads.txt 는 규격상 루트 도메인에서 찾으므로 platformholder.site/ads.txt →
+        # blog.platformholder.site/ads.txt 체인이 성립한다(같은 루트 도메인 내 리다이렉트는 허용).
+        # blog 는 Vercel 에 있으므로 SEO 정본은 그대로 blog 에 남는다.
+        - "traefik.http.routers.apex.rule=Host(`platformholder.site`) || Host(`www.platformholder.site`)"
+        - "traefik.http.routers.apex.entrypoints=websecure"
+        - "traefik.http.routers.apex.tls.certresolver=myresolver"
+        - "traefik.http.routers.apex.service=gateway"
+        - "traefik.http.routers.apex.middlewares=apex-to-blog"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.regex=^https://(?:www\\.)?platformholder\\.site/(.*)"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.replacement=https://blog.platformholder.site/$${1}"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.permanent=true"
         - "traefik.docker.network=gateway"
     healthcheck:
       test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
