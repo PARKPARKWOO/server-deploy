@@ -86,10 +86,16 @@ services:
       #    Traefik 은 이미 `node.hostname == pve` 고정이라 host 모드의 부작용이 없다.
       #    부수 효과: 전 서비스가 실제 클라이언트 IP 를 보게 된다(개선이지만
       #    게이트웨이 rate-limit 동작이 달라질 수 있으니 배포 후 확인할 것).
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
+      # ⛔ **host 모드로 바꾸지 말 것 — 2026-08-01 실행했다가 전 서비스가 다운됐다.**
+      #    `mode: host` 로 전환한 배포는 성공했고 포트 스펙도 반영됐지만, 그 직후
+      #    443 이 외부에서 **연결 자체가 되지 않았다**(전 호스트 curl `http=000`).
+      #    ingress 로 되돌려 복구. 원인 미규명 — 재시도 전에 아래를 먼저 확인할 것:
+      #      · pve 호스트에서 :443 을 이미 점유한 프로세스가 있는지 (`ss -lntp | grep 443`)
+      #      · 공유기 포트포워딩이 ingress VIP 를 향하는지 노드 IP 를 향하는지
+      #      · 노드가 2개(`my`·`pve`)인데 포워딩 대상이 Traefik 이 도는 pve 가 맞는지
+      #    → SNAT(V15) 는 여전히 미해결이다. wp-blog 의 IP 기반 방어 4종이 걸려 있으므로
+      #      대안(예: Traefik `proxyProtocol`, 또는 노드 1개로 축소)을 먼저 설계할 것.
+      - "443:443"
     networks:
       - internal-network
       - gateway
