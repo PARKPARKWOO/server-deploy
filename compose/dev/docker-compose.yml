@@ -12,8 +12,14 @@ services:
       placement:
         constraints:
           - node.hostname == pve
-      labels:
-        - "traefik.enable=true"
+      # ⚠️ `traefik.enable=true` 를 여기 두지 않는다 (2026-08-01 제거).
+      #    Traefik 이 **자기 자신**을 라우팅 대상으로 보게 되는데 포트 라벨이 없어
+      #    15초마다 `service "dev-reverse-proxy" error: port is missing` 를 뱉는다.
+      #    `93a26b5`(exposedByDefault=false)가 이걸 고쳤다고 기록돼 있었지만,
+      #    **명시 라벨은 그 설정보다 우선하므로 안 잡혔다** — 2026-08-01 로그에서 확인.
+      #    이 스팸이 json-file 회전 창(20MB×5)에서 정작 봐야 할 ACME 로그를 밀어낸다.
+      #    Traefik 자신은 라우팅 대상이 아니므로 제거해도 잃는 게 없다.
+      labels: []
     command:
       - "--entrypoints.metrics.address=:8080"
       - "--providers.docker=true"
@@ -65,7 +71,25 @@ services:
       - "--metrics.prometheus.entryPoint=metrics"
     ports:
       - "8080:8080"
-      - "443:443"
+      # ⛔ 443 은 **host 모드여야 한다.** 단축 문법(`"443:443"`)은 ingress 모드이고,
+      #    Swarm 라우팅 메시가 소스 IP 를 SNAT 해서 Traefik 이 보는 클라이언트가
+      #    전부 `10.0.0.x` 가 된다.
+      #    2026-08-01 실측: 액세스로그 3시간 354건이 **전부 `10.0.0.79` 단일 IP**.
+      #
+      #    그러면 IP 기반 방어가 한꺼번에 죽는다 —
+      #      · wp-blog 관리 경로의 `ipwhitelist`(tailnet) → 아무와도 매칭 안 됨 = 영구 403
+      #      · Apache `<LocationMatch>` IP 게이트 → 같은 이유로 tailnet 까지 403
+      #      · `config-extra.php` 의 REMOTE_ADDR 보정 → 전 방문자가 같은 IP
+      #      · rate-limit → 소스 IP 당 버킷인데 전원이 한 버킷 공유
+      #    앞의 둘은 **운영자 본인을 잠근다.**
+      #
+      #    Traefik 은 이미 `node.hostname == pve` 고정이라 host 모드의 부작용이 없다.
+      #    부수 효과: 전 서비스가 실제 클라이언트 IP 를 보게 된다(개선이지만
+      #    게이트웨이 rate-limit 동작이 달라질 수 있으니 배포 후 확인할 것).
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
     networks:
       - internal-network
       - gateway
@@ -164,6 +188,27 @@ services:
         - "traefik.http.routers.apexstatic.tls=true"
         - "traefik.http.routers.apexstatic.tls.certresolver=myresolver"
         - "traefik.http.routers.apexstatic.priority=200"
+
+        # ── apex 의 나머지 경로 → blog 로 301 ────────────────────────────────
+        # apex 가 /ads.txt 말고 전부 404 인 상태는 AdSense 심사에서 "콘텐츠 없는
+        # 사이트" 로 읽힌다(반려 사유 1위가 not enough original content).
+        # AdSense 의 "사이트" 는 platformholder.site **전 서브도메인**이고
+        # blog·trainer 에는 실제 콘텐츠가 있는데, apex 가 막다른 길이라 크롤러가
+        # 거기로 들어갈 경로가 없다. 301 로 길을 낸다.
+        #
+        # priority 를 낮게 둬서 위 /ads.txt 라우터가 **먼저** 매칭되게 한다 —
+        # ads.txt 는 리다이렉트 없이 직접 서빙되어야 판정이 가장 확실하다.
+        # service 는 형식상 필요할 뿐이다(미들웨어가 서비스 도달 전에 응답한다).
+        - "traefik.http.routers.apexredirect.rule=Host(`platformholder.site`) || Host(`www.platformholder.site`)"
+        - "traefik.http.routers.apexredirect.entrypoints=websecure"
+        - "traefik.http.routers.apexredirect.tls=true"
+        - "traefik.http.routers.apexredirect.tls.certresolver=myresolver"
+        - "traefik.http.routers.apexredirect.service=apexstatic"
+        - "traefik.http.routers.apexredirect.middlewares=apex-to-blog"
+        - "traefik.http.routers.apexredirect.priority=1"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.regex=^https://(?:www\\.)?platformholder\\.site/(.*)"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.replacement=https://blog.platformholder.site/$${1}"
+        - "traefik.http.middlewares.apex-to-blog.redirectregex.permanent=true"
 
   kafka1:
     image: 'bitnamilegacy/kafka:3.9'
