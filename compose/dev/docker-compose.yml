@@ -43,6 +43,21 @@ services:
       - "--certificatesresolvers.fmpresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.fmpresolver.acme.email=wy9295@naver.com"
       - "--certificatesresolvers.fmpresolver.acme.storage=/letsencrypt/acme-fmp.json"
+      # blogresolver: wp-blog 전용 격리 resolver (prd/wp-blog §4.9).
+      # myresolver 를 쓰면 호스트가 하나 늘 때마다 SAN 집합이 흔들려 매번 신규 발급이
+      # 도는 기존 문제(traefik-cert-churn)를 서드파티 CMS 가 직접 건드리게 된다.
+      #
+      # storage 분리가 격리하는 것과 **하지 못하는 것**을 구분할 것:
+      #   격리된다 — acme-blog.json 이 깨져도 acme.json 의 프로덕션 인증서는 무사하다.
+      #              발급 실패도 저장소를 넘어 번지지 않는다.
+      #   격리 안 된다 — **Let's Encrypt 의 rate limit 은 등록 도메인 단위다.**
+      #              "Certificates per Registered Domain 50/week" 는 platformholder.site
+      #              하위 전부를 한 바구니로 센다. resolver 를 나눠도 같은 버킷이라,
+      #              wp-blog 이 발급을 반복하면 gateway 인증서 갱신까지 함께 막힌다.
+      #              → 이 resolver 를 쓰는 라우터를 늘릴 때는 그 점을 먼저 볼 것.
+      - "--certificatesresolvers.blogresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.blogresolver.acme.email=wy9295@naver.com"
+      - "--certificatesresolvers.blogresolver.acme.storage=/letsencrypt/acme-blog.json"
       - "--metrics.prometheus=true"
       - "--metrics.prometheus.addEntryPointsLabels=true"
       - "--metrics.prometheus.addServicesLabels=true"
@@ -54,6 +69,13 @@ services:
     networks:
       - internal-network
       - gateway
+      # wp-blog 전용 엣지. WordPress 는 서드파티 CMS 라 `internal-network` 에 두지
+      # 않는다 — RCE 1건이 브라우저를 전혀 경유하지 않고 auth-server·gateway·
+      # find-my-pet-backend 의 내부 포트와 무인증 Kafka(9092)·eureka(8761)·MinIO 에
+      # L3 로 직접 도달한다(prd/wp-blog §4.8 경로 ③).
+      # Traefik 만 양쪽에 걸쳐 라우팅한다.
+      #   사전 생성 필요: docker network create -d overlay --attachable wpblog-edge
+      - wpblog-edge
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
@@ -94,6 +116,55 @@ services:
 #      - ./:/var/www
 #    networks:
 #      - internal-network
+  # ───────────────────────────────────────────────────────────────────────────
+  # apex-static — 루트 도메인의 정적 파일 서빙 (현재는 ads.txt 하나)
+  #
+  #   왜 별도 서비스인가:
+  #   ads.txt 는 AdSense 계정 1개로 전 사이트(wp-blog·trainer·…)를 돌리는 구조라
+  #   **어느 한 제품이 아니라 공용 인프라 자산**이다. 제품 컨테이너(wp-blog 등)에
+  #   얹으면 그 제품이 죽을 때 전 사이트의 판매자 인증이 함께 죽는다.
+  #   그래서 인프라 레포가 소유하고, 아무 앱에도 의존하지 않는 최소 컨테이너로 둔다.
+  #
+  #   Traefik 라우터가 apex 를 받으므로 **이 서비스가 apex 인증서 발급을 촉발한다**
+  #   — traefik-cert-churn 문서의 "발급 카나리아" 역할을 겸한다.
+  #   기존 8호스트 번들의 SAN 집합을 건드리지 않고 단일 도메인 인증서 1장만 새로 받는다.
+  #
+  #   ⚠️ Swarm config 는 불변이다. ads.txt 내용을 고치면 `apex_ads_txt_v1` 을 v2 로
+  #      올리고 아래 source 도 함께 바꿔야 한다. 이름만 두면 옛 내용이 계속 서빙된다.
+  # ───────────────────────────────────────────────────────────────────────────
+  apex-static:
+    image: nginx:1.29-alpine
+    networks:
+      - internal-network
+    configs:
+      - source: apex_ads_txt_v1
+        target: /usr/share/nginx/html/ads.txt
+        mode: 0444
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == pve
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 32M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=internal-network"
+        - "traefik.http.services.apexstatic.loadbalancer.server.port=80"
+        # apex 의 /ads.txt 만 가져간다. 나머지 apex 경로는 다른 라우터(리다이렉트)가 받는다.
+        # priority 를 명시하는 이유: 리다이렉트 라우터보다 **반드시 먼저** 매칭돼야
+        # ads.txt 가 301 로 새어나가지 않는다. (스펙상 같은 루트 도메인 내 리다이렉트는
+        # 허용되지만, 크롤러가 한 번 덜 도는 편이 낫고 의존도 줄어든다)
+        - "traefik.http.routers.apexstatic.rule=(Host(`platformholder.site`) || Host(`www.platformholder.site`)) && Path(`/ads.txt`)"
+        - "traefik.http.routers.apexstatic.entrypoints=websecure"
+        - "traefik.http.routers.apexstatic.tls=true"
+        - "traefik.http.routers.apexstatic.tls.certresolver=myresolver"
+        - "traefik.http.routers.apexstatic.priority=200"
+
   kafka1:
     image: 'bitnamilegacy/kafka:3.9'
     deploy:
@@ -130,6 +201,10 @@ networks:
     driver: overlay
     attachable: true
     name: gateway
+  # wp-blog 스택과 공유한다. 그 스택이 만들면 이름이 `wp-blog_wpblog-edge` 가 되어
+  # 여기서 붙을 수 없으므로, 스택 밖에서 수동 생성하고 양쪽 다 external 로 참조한다.
+  wpblog-edge:
+    external: true
 
 volumes:
   kafka1:
@@ -140,4 +215,7 @@ volumes:
 configs:
   nginx_config:
     file: default.template
+  # 내용을 바꾸면 이름을 _v2 로 올릴 것 — Swarm config 는 불변이다 (apex-static 주석 참조)
+  apex_ads_txt_v1:
+    file: apex-static/ads.txt
     external: true
